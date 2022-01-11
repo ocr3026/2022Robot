@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import ocr3026.util.Limelight;
+import ocr3026.util.Toggle;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,6 +35,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private Limelight limelight;
+
+  private Toggle drivetrainToggle = new Toggle();
 
   Joystick joystick = new Joystick(0);
   Joystick steer = new Joystick(1);
@@ -115,13 +117,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(joystick.getRawButton(10)){
-      leftTankSolenoid.set(!leftTankSolenoid.get());
-      rightTankSolenoid.set(!rightTankSolenoid.get());
-      tankDrive.arcadeDrive(joystick.getY(), steer.getY());
+    if(joystick.getRawButtonPressed(10)) {
+      boolean val = drivetrainToggle.toggleValue();
+      leftTankSolenoid.set(val);
+      rightTankSolenoid.set(val);
     }
-    else{
-      mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+
+    if(drivetrainToggle.getValue()) {
+      //  TODO: put mecanum code here
+    } else {
+      // TODO: put tank code here
     }
   }
   /** This function is called once when the robot is disabled. */
