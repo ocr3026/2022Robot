@@ -7,8 +7,14 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+=======
+
+import ocr3026.util.Limelight;
+
+>>>>>>> 4fba697e29923dcbb586df661065ed29c69c2af5
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -24,6 +30,8 @@ public class Robot extends TimedRobot {
   XboxController xbox = new XboxController(2);
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private Limelight limelight;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -33,6 +41,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    limelight = new Limelight();
   }
 
   /**
