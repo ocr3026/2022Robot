@@ -21,6 +21,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import ocr3026.util.Limelight;
 import ocr3026.util.Toggle;
+import ocr3026.util.Limelight.camMode;
+import ocr3026.util.Limelight.ledMode;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -36,7 +38,7 @@ public class Robot extends TimedRobot {
 
   private Limelight limelight;
 
-  private Toggle drivetrainToggle = new Toggle();
+  private Toggle drivetrainToggle = new Toggle(); // True if tank, False if mecanum
 
   Joystick joystick = new Joystick(0);
   Joystick steer = new Joystick(1);
@@ -117,17 +119,35 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if(joystick.getRawButtonPressed(10)) {
-      boolean val = drivetrainToggle.toggleValue();
-      leftTankSolenoid.set(val);
-      rightTankSolenoid.set(val);
-    }
 
-    if(drivetrainToggle.getValue()) {
-      tankDrive.arcadeDrive(joystick.getY(), steer.getX());
-    }
-    else {
-      mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+    if(xbox.getLeftTriggerAxis() > 0.9) {
+      // Vision
+      limelight.setCamMode(camMode.VISION);
+      limelight.setLedMode(ledMode.PIPELINE);
+
+      // Phase 1: Line up rotation
+
+      
+
+      // Phase 2: Get to sweet spot distance
+      
+    } else {
+      // Driver
+      limelight.setCamMode(camMode.DRIVER);
+      limelight.setLedMode(ledMode.OFF);
+
+      if(joystick.getRawButtonPressed(10)) {
+        boolean val = drivetrainToggle.toggleValue();
+        leftTankSolenoid.set(val);
+        rightTankSolenoid.set(val);
+      }
+
+      if(drivetrainToggle.getValue()) {
+        tankDrive.arcadeDrive(joystick.getY(), steer.getX());
+      }
+      else {
+        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+      }
     }
   }
   /** This function is called once when the robot is disabled. */
