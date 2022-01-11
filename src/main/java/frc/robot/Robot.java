@@ -7,14 +7,19 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-<<<<<<< HEAD
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
-=======
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
-import ocr3026.util.Limelight;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
->>>>>>> 4fba697e29923dcbb586df661065ed29c69c2af5
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -29,8 +34,18 @@ public class Robot extends TimedRobot {
   Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-
-  private Limelight limelight;
+  CANSparkMax topleftmecanum = new CANSparkMax(0, MotorType.kBrushless);
+  CANSparkMax toprightecanum = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax backleftmecanum = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax backrightmecanum = new CANSparkMax(3, MotorType.kBrushless);
+  MecanumDrive mecdrive = new MecanumDrive(toprightecanum, backleftmecanum, toprightecanum, backrightmecanum);
+  CANSparkMax lefttank = new CANSparkMax(4, MotorType.kBrushless);
+  CANSparkMax righttank = new CANSparkMax(5, MotorType.kBrushless);
+  MotorControllerGroup lefttankdrive = new MotorControllerGroup(topleftmecanum, backleftmecanum, lefttank);
+  MotorControllerGroup righttankdrive = new MotorControllerGroup(toprightecanum, backrightmecanum, righttank);
+  DifferentialDrive drive = new DifferentialDrive(lefttankdrive, righttankdrive);
+  Solenoid lefttanksol = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
+  Solenoid righttanksol = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -41,8 +56,6 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-
-    limelight = new Limelight();
   }
 
   /**
@@ -92,8 +105,16 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
-
+  public void teleopPeriodic() {
+    if(joystick.getRawButton(10)){
+      lefttanksol.set(!lefttanksol.get());
+      righttanksol.set(!righttanksol.get());
+      drive.arcadeDrive(joystick.getY(), steer.getY());
+    }
+    else{
+      mecdrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+    }
+  }
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
