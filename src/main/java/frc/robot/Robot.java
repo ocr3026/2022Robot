@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import ocr3026.util.Limelight;
+
 import ocr3026.util.Toggle;
 
 /**
@@ -37,10 +40,13 @@ public class Robot extends TimedRobot {
   private Limelight limelight;
 
   private Toggle drivetrainToggle = new Toggle();
+  private Toggle fieldtoggle = new Toggle();
 
   Joystick joystick = new Joystick(0);
   Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
+
+  AHRS gyroscope = new AHRS();
 
   CANSparkMax frontLeftMecanum = new CANSparkMax(0, MotorType.kBrushless);
   CANSparkMax frontRightMecanum = new CANSparkMax(1, MotorType.kBrushless);
@@ -122,9 +128,14 @@ public class Robot extends TimedRobot {
       leftTankSolenoid.set(val);
       rightTankSolenoid.set(val);
     }
-
+    if (joystick.getRawButtonPressed(11)){
+      boolean field = fieldtoggle.toggleValue();
+    }
     if(drivetrainToggle.getValue()) {
       tankDrive.arcadeDrive(joystick.getY(), steer.getX());
+    }
+    else if(fieldtoggle.getValue()){
+      mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getAngle());
     }
     else {
       mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
