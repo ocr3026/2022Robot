@@ -124,9 +124,10 @@ public class Robot extends TimedRobot {
     }
 
     if(drivetrainToggle.getValue()) {
-      //  TODO: put mecanum code here
-    } else {
-      // TODO: put tank code here
+      tankDrive.arcadeDrive(joystick.getY(), steer.getX());
+    }
+    else {
+      mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
     }
   }
   /** This function is called once when the robot is disabled. */
