@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -57,6 +58,11 @@ public class Robot extends TimedRobot {
   DifferentialDrive tankDrive = new DifferentialDrive(leftTankDrive, rightTankDrive);
   Solenoid leftTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
   Solenoid rightTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
+
+  PIDController visionRotationController = new PIDController(1, 1, 1);
+  PIDController visionDistanceController = new PIDController(1, 1, 1);
+  boolean visionStage = false;
+  double visionSweetArea = 0.25;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -125,12 +131,32 @@ public class Robot extends TimedRobot {
       limelight.setCamMode(camMode.VISION);
       limelight.setLedMode(ledMode.PIPELINE);
 
+      drivetrainToggle.setValue(false);
+      leftTankSolenoid.set(false);
+      rightTankSolenoid.set(false);
+
+      mecanumDrive.driveCartesian(0, 0, 0);
+
       // Phase 1: Line up rotation
 
-      
+      if(visionStage == false) {
+        if(-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
+          visionStage = true;
+        } else {
+          mecanumDrive.driveCartesian(0, 0, visionRotationController.calculate(limelight.getTargetX(), 0.0));
+        }
+      }
 
       // Phase 2: Get to sweet spot distance
       
+      if(visionStage == true) {
+        if(limelight.getTargetArea() == visionSweetArea) {
+          visionStage = false;
+        } else {
+          mecanumDrive.driveCartesian(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
+        }
+      }
+
     } else {
       // Driver
       limelight.setCamMode(camMode.DRIVER);
@@ -148,6 +174,10 @@ public class Robot extends TimedRobot {
       else {
         mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
       }
+    }
+
+    if(xbox.getRightTriggerAxis() > 0.9) {
+      
     }
   }
   /** This function is called once when the robot is disabled. */
