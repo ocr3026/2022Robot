@@ -21,8 +21,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
-
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Limelight;
 
@@ -73,6 +73,9 @@ public class Robot extends TimedRobot {
   double visionSweetArea = 0.25;
 
   CANSparkMax flywheel = new CANSparkMax(6, MotorType.kBrushless);
+
+  WPI_VictorSPX intake = new WPI_VictorSPX(10);
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -118,7 +121,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        // Put custom auto code here
+        // Put custom auto code herespeed
         break;
       case kDefaultAuto:
       default:
@@ -200,7 +203,15 @@ public class Robot extends TimedRobot {
     }
 
     if (xbox.getRightTriggerAxis() > 0.9) {
+      flywheel.set(1);
+    } else {
+      flywheel.set(0);
+    }
 
+    if(xbox.getAButton()) {
+      intake.set(0.5);
+    } else {
+      intake.set(0);
     }
   }
 
