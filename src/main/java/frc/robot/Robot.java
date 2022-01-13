@@ -53,10 +53,10 @@ public class Robot extends TimedRobot {
 
   AHRS gyroscope = new AHRS();
 
-  CANSparkMax frontLeftMecanum = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax frontRightMecanum = new CANSparkMax(0, MotorType.kBrushless);
-  CANSparkMax backLeftMecanum = new CANSparkMax(3, MotorType.kBrushless);
-  CANSparkMax backRightMecanum = new CANSparkMax(2, MotorType.kBrushless);
+  CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
+  CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
+  CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
   MecanumDrive mecanumDrive = new MecanumDrive(frontRightMecanum, backLeftMecanum, frontRightMecanum, backRightMecanum);
   
   CANSparkMax leftTank = new CANSparkMax(4, MotorType.kBrushless);
@@ -137,74 +137,73 @@ public class Robot extends TimedRobot {
     if (joystick.getRawButtonPressed(12)) {
       gyroscope.zeroYaw();
     }
+
     if (joystick.getRawButtonPressed(10)) {
       boolean val = drivetrainToggle.toggleValue();
       leftTankSolenoid.set(val);
       rightTankSolenoid.set(val);
     }
+
     if (joystick.getRawButtonPressed(11)) {
-      boolean field = fieldtoggle.toggleValue();
+      fieldtoggle.toggleValue();
     }
-    if (drivetrainToggle.getValue()) {
-      tankDrive.arcadeDrive(joystick.getY(), steer.getX());
-      if (xbox.getLeftTriggerAxis() > 0.9) {
-        // Vision
-        limelight.setCamMode(camMode.VISION);
-        limelight.setLedMode(ledMode.PIPELINE);
 
-        drivetrainToggle.setValue(false);
-        leftTankSolenoid.set(false);
-        rightTankSolenoid.set(false);
+    if (xbox.getLeftTriggerAxis() > 0.9) {
+      // Vision
+      limelight.setCamMode(camMode.VISION);
+      limelight.setLedMode(ledMode.PIPELINE);
 
-        mecanumDrive.driveCartesian(0, 0, 0);
+      drivetrainToggle.setValue(false);
+      leftTankSolenoid.set(false);
+      rightTankSolenoid.set(false);
 
-        // Phase 1: Line up rotation
+      mecanumDrive.driveCartesian(0, 0, 0);
 
-        if (visionStage == false) {
-          if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
-            visionStage = true;
-          } else {
-            mecanumDrive.driveCartesian(0, 0, visionRotationController.calculate(limelight.getTargetX(), 0.0));
-          }
-        }
+      // Phase 1: Line up rotation
 
-        // Phase 2: Get to sweet spot distance
-
-        if (visionStage == true) {
-          if (limelight.getTargetArea() == visionSweetArea) {
-            visionStage = false;
-          } else {
-            mecanumDrive.driveCartesian(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
-          }
-        }
-
-      } else {
-        // Driver
-        limelight.setCamMode(camMode.DRIVER);
-        limelight.setLedMode(ledMode.OFF);
-
-        if (joystick.getRawButtonPressed(10)) {
-          boolean val = drivetrainToggle.toggleValue();
-          leftTankSolenoid.set(val);
-          rightTankSolenoid.set(val);
-        }
-        if (joystick.getRawButtonPressed(11)) {
-          boolean field = fieldtoggle.toggleValue();
-        }
-        if (drivetrainToggle.getValue()) {
-          tankDrive.arcadeDrive(joystick.getY(), steer.getX());
-        } else if (fieldtoggle.getValue()) {
-          mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getAngle());
+      if (visionStage == false) {
+        if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
+          visionStage = true;
         } else {
-          mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+          mecanumDrive.driveCartesian(0, 0, visionRotationController.calculate(limelight.getTargetX(), 0.0));
         }
       }
 
-      if (xbox.getRightTriggerAxis() > 0.9) {
+      // Phase 2: Get to sweet spot distance
 
+      if (visionStage == true) {
+        if (limelight.getTargetArea() == visionSweetArea) {
+          visionStage = false;
+        } else {
+          mecanumDrive.driveCartesian(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
+        }
       }
+        
+    } else {
+      // Driver
+      limelight.setCamMode(camMode.DRIVER);
+      limelight.setLedMode(ledMode.OFF);
+
+      if (joystick.getRawButtonPressed(10)) {
+        boolean val = drivetrainToggle.toggleValue();
+        leftTankSolenoid.set(val);
+        rightTankSolenoid.set(val);
+      }
+        
+      if (drivetrainToggle.getValue()) {
+        tankDrive.arcadeDrive(joystick.getY(), steer.getX());
+      } else if (fieldtoggle.getValue()) {
+        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getAngle());
+      } else {
+        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+      }
+    }
+
+    if (xbox.getRightTriggerAxis() > 0.9) {
+
     }
   }
+
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {}
