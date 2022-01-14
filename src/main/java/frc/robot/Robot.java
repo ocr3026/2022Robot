@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
   Solenoid leftTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
   Solenoid rightTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
 
+  CANSparkMax flywheel = new CANSparkMax(6, MotorType.kBrushless);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
