@@ -20,7 +20,10 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import com.kauailabs.navx.frc.AHRS;
+
 import ocr3026.util.Limelight;
+
 import ocr3026.util.Toggle;
 import ocr3026.util.Limelight.camMode;
 import ocr3026.util.Limelight.ledMode;
@@ -39,11 +42,14 @@ public class Robot extends TimedRobot {
 
   private Limelight limelight;
 
-  private Toggle drivetrainToggle = new Toggle(); // True if tank, False if mecanum
+  private Toggle drivetrainToggle = new Toggle();
+  private Toggle fieldtoggle = new Toggle();
 
   Joystick joystick = new Joystick(0);
   Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
+
+  AHRS gyroscope = new AHRS();
 
   CANSparkMax frontLeftMecanum = new CANSparkMax(0, MotorType.kBrushless);
   CANSparkMax frontRightMecanum = new CANSparkMax(1, MotorType.kBrushless);
@@ -64,6 +70,7 @@ public class Robot extends TimedRobot {
   boolean visionStage = false;
   double visionSweetArea = 0.25;
 
+  CANSparkMax flywheel = new CANSparkMax(6, MotorType.kBrushless);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -125,7 +132,6 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-
     if(xbox.getLeftTriggerAxis() > 0.9) {
       // Vision
       limelight.setCamMode(camMode.VISION);
@@ -167,9 +173,14 @@ public class Robot extends TimedRobot {
         leftTankSolenoid.set(val);
         rightTankSolenoid.set(val);
       }
-
+      if (joystick.getRawButtonPressed(11)){
+        boolean field = fieldtoggle.toggleValue();
+      }
       if(drivetrainToggle.getValue()) {
         tankDrive.arcadeDrive(joystick.getY(), steer.getX());
+      }
+      else if(fieldtoggle.getValue()){
+        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getAngle());
       }
       else {
         mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
