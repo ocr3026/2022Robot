@@ -3,10 +3,10 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,6 +20,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
+
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import ocr3026.util.Limelight;
 
@@ -48,10 +50,10 @@ public class Robot extends TimedRobot {
 
   AHRS gyroscope = new AHRS();
 
-  CANSparkMax frontLeftMecanum = new CANSparkMax(0, MotorType.kBrushless);
-  CANSparkMax frontRightMecanum = new CANSparkMax(1, MotorType.kBrushless);
-  CANSparkMax backLeftMecanum = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax backRightMecanum = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax frontLeftMecanum = new CANSparkMax(1, MotorType.kBrushless);
+  CANSparkMax frontRightMecanum = new CANSparkMax(0, MotorType.kBrushless);
+  CANSparkMax backLeftMecanum = new CANSparkMax(3, MotorType.kBrushless);
+  CANSparkMax backRightMecanum = new CANSparkMax(2, MotorType.kBrushless);
   MecanumDrive mecanumDrive = new MecanumDrive(frontRightMecanum, backLeftMecanum, frontRightMecanum, backRightMecanum);
   
   CANSparkMax leftTank = new CANSparkMax(4, MotorType.kBrushless);
@@ -81,9 +83,9 @@ public class Robot extends TimedRobot {
    * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
    *
    * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
+'   * SmartDashboard integrated updating.
    */
-  @Override
+ @Override
   public void robotPeriodic() {}
 
   /**
@@ -124,6 +126,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    if(joystick.getRawButtonPressed(12)){
+      gyroscope.zeroYaw();
+    }
     if(joystick.getRawButtonPressed(10)) {
       boolean val = drivetrainToggle.toggleValue();
       leftTankSolenoid.set(val);
