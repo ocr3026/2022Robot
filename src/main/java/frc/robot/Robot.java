@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +25,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Limelight;
+
 import ocr3026.util.Toggle;
 import ocr3026.util.Limelight.camMode;
 import ocr3026.util.Limelight.ledMode;
@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case kCustomAuto:
-        // Put custom auto code herespeed
+        // Put custom auto code here
         break;
       case kDefaultAuto:
       default:
@@ -137,82 +137,18 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    if (joystick.getRawButtonPressed(12)) {
-      gyroscope.zeroYaw();
-    }
-
+  /** ---THIS CODE ALLOWS TOGGLE BETWEEN TANK AND MECANUM--- */
     if (joystick.getRawButtonPressed(10)) {
       boolean val = drivetrainToggle.toggleValue();
       leftTankSolenoid.set(val);
       rightTankSolenoid.set(val);
     }
 
-    if (joystick.getRawButtonPressed(11)) {
-      fieldtoggle.toggleValue();
-    }
-
-    if (xbox.getLeftTriggerAxis() > 0.9) {
-      // Vision
-      limelight.setCamMode(camMode.VISION);
-      limelight.setLedMode(ledMode.PIPELINE);
-
-      drivetrainToggle.setValue(false);
-      leftTankSolenoid.set(false);
-      rightTankSolenoid.set(false);
-
-      mecanumDrive.driveCartesian(0, 0, 0);
-
-      // Phase 1: Line up rotation
-
-      if (visionStage == false) {
-        if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
-          visionStage = true;
-        } else {
-          mecanumDrive.driveCartesian(0, 0, visionRotationController.calculate(limelight.getTargetX(), 0.0));
-        }
-      }
-
-      // Phase 2: Get to sweet spot distance
-
-      if (visionStage == true) {
-        if (limelight.getTargetArea() == visionSweetArea) {
-          visionStage = false;
-        } else {
-          mecanumDrive.driveCartesian(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
-        }
-      }
-        
+    if (drivetrainToggle.getValue()) {
+      tankDrive.arcadeDrive(joystick.getY(), steer.getX());
     } else {
-      // Driver
-      limelight.setCamMode(camMode.DRIVER);
-      limelight.setLedMode(ledMode.OFF);
-
-      if (joystick.getRawButtonPressed(10)) {
-        boolean val = drivetrainToggle.toggleValue();
-        leftTankSolenoid.set(val);
-        rightTankSolenoid.set(val);
-      }
-        
-      if (drivetrainToggle.getValue()) {
-        tankDrive.arcadeDrive(joystick.getY(), steer.getX());
-      } else if (fieldtoggle.getValue()) {
-        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getAngle());
-      } else {
-        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
-      }
-    }
-
-    if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(1);
-    } else {
-      flywheel.set(0);
-    }
-
-    if(xbox.getAButton()) {
-      intake.set(0.5);
-    } else {
-      intake.set(0);
-    }
+      mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+    } 
   }
 
   /** This function is called once when the robot is disabled. */
@@ -231,3 +167,5 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {}
 }
+
+
