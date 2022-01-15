@@ -17,12 +17,13 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
+import edu.wpi.first.cameraserver.CameraServer;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
-
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Limelight;
@@ -53,11 +54,11 @@ public class Robot extends TimedRobot {
 
   AHRS gyroscope = new AHRS();
 
-  CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
-  CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
-  CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
-  CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
-  MecanumDrive mecanumDrive = new MecanumDrive(frontRightMecanum, backLeftMecanum, frontRightMecanum, backRightMecanum);
+  WPI_VictorSPX frontLeftMecanum = new WPI_VictorSPX(29);
+  WPI_VictorSPX frontRightMecanum = new WPI_VictorSPX(6);
+  WPI_VictorSPX backLeftMecanum = new WPI_VictorSPX(22);
+  WPI_VictorSPX backRightMecanum = new WPI_VictorSPX(18);
+  MecanumDrive mecanumDrive = new MecanumDrive(frontLeftMecanum, backLeftMecanum, frontRightMecanum, backRightMecanum);
   
   CANSparkMax leftTank = new CANSparkMax(4, MotorType.kBrushless);
   CANSparkMax rightTank = new CANSparkMax(5, MotorType.kBrushless);
@@ -87,6 +88,16 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     limelight = new Limelight();
+
+    mecanumDrive.setDeadband(0.1);
+    tankDrive.setDeadband(0.1);
+    
+    frontLeftMecanum.setNeutralMode(NeutralMode.Brake);
+    backLeftMecanum.setNeutralMode(NeutralMode.Brake);
+    frontRightMecanum.setNeutralMode(NeutralMode.Brake);
+    backRightMecanum.setNeutralMode(NeutralMode.Brake);
+  
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -97,7 +108,10 @@ public class Robot extends TimedRobot {
 '   * SmartDashboard integrated updating.
    */
  @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    frontRightMecanum.setInverted(true);
+    backRightMecanum.setInverted(true);
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -196,9 +210,9 @@ public class Robot extends TimedRobot {
       if (drivetrainToggle.getValue()) {
         tankDrive.arcadeDrive(joystick.getY(), steer.getX());
       } else if (fieldtoggle.getValue()) {
-        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getAngle());
+        mecanumDrive.driveCartesian(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getAngle());
       } else {
-        mecanumDrive.driveCartesian(joystick.getY(), joystick.getX(), steer.getX());
+        mecanumDrive.driveCartesian(joystick.getY(), -joystick.getX(), steer.getX());
       }
     }
 
