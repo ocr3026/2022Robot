@@ -213,7 +213,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    drivetrainToggle.setValue(false);
+    fieldtoggle.setValue(false);
+  }
 
   /** This function is called periodically when disabled. */
   @Override
