@@ -19,7 +19,7 @@ public class MecanumTankDrive {
     }
   }
 
-  public double deadband = 1;
+  public double deadband = 0;
 
   public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, Solenoid leftSolenoid, MotorController frontRight, MotorController rearRight, MotorController tankRight, Solenoid rightSolenoid) {
     this.frontLeft = frontLeft;

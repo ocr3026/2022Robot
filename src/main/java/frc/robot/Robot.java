@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
 
   private Limelight limelight;
 
-  private Toggle drivetrainToggle = new Toggle();
   private Toggle fieldtoggle = new Toggle();
 
   Joystick joystick = new Joystick(0);
@@ -67,7 +66,7 @@ public class Robot extends TimedRobot {
   boolean visionStage = false;
   double visionSweetArea = 0.25;
 
-  CANSparkMax flywheel = new CANSparkMax(52, MotorType.kBrushless);
+  CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
   WPI_VictorSPX intake = new WPI_VictorSPX(53);
 
@@ -147,7 +146,7 @@ public class Robot extends TimedRobot {
       gyroscope.zeroYaw();
     }
 
-    if (joystick.getRawButtonPressed(11)) {
+    if (joystick.getRawButtonPressed(2)) {
       fieldtoggle.toggleValue();
     }
 
@@ -155,8 +154,6 @@ public class Robot extends TimedRobot {
       // Vision
       limelight.setCamMode(camMode.VISION);
       limelight.setLedMode(ledMode.PIPELINE);
-
-      drivetrainToggle.setValue(false);
 
       drivetrain.MecanumRobotCentric(0, 0, 0);
 
@@ -183,23 +180,19 @@ public class Robot extends TimedRobot {
       // Driver
       limelight.setCamMode(camMode.DRIVER);
       limelight.setLedMode(ledMode.OFF);
-
-      if (joystick.getRawButtonPressed(10)) {
-        drivetrainToggle.toggleValue();
-      }
       
-      if (drivetrainToggle.getValue()) {
+      if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), steer.getX());
       } else if (fieldtoggle.getValue()) {
-        drivetrain.MecanumFieldCentric(joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getYaw());
+        drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
       } else {
-        drivetrain.MecanumRobotCentric(joystick.getY(), joystick.getX(), steer.getX());
+        drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
       }
       
     }
 
-    if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(1);
+    if (joystick.getRawButton(3)) {
+      flywheel.set(-1);
     } else {
       flywheel.set(0);
     }
@@ -214,7 +207,6 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    drivetrainToggle.setValue(false);
     fieldtoggle.setValue(false);
   }
 
