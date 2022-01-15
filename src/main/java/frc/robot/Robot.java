@@ -59,23 +59,23 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX backLeftMecanum = new WPI_VictorSPX(22);
   WPI_VictorSPX backRightMecanum = new WPI_VictorSPX(18);
   MecanumDrive mecanumDrive = new MecanumDrive(frontLeftMecanum, backLeftMecanum, frontRightMecanum, backRightMecanum);
-  
-  CANSparkMax leftTank = new CANSparkMax(4, MotorType.kBrushless);
-  CANSparkMax rightTank = new CANSparkMax(5, MotorType.kBrushless);
+  /*
+  CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
+  CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
   MotorControllerGroup leftTankDrive = new MotorControllerGroup(frontLeftMecanum, backLeftMecanum, leftTank);
   MotorControllerGroup rightTankDrive = new MotorControllerGroup(frontRightMecanum, backRightMecanum, rightTank);
   DifferentialDrive tankDrive = new DifferentialDrive(leftTankDrive, rightTankDrive);
   Solenoid leftTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
   Solenoid rightTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
-
+  */
   PIDController visionRotationController = new PIDController(1, 1, 1);
   PIDController visionDistanceController = new PIDController(1, 1, 1);
   boolean visionStage = false;
   double visionSweetArea = 0.25;
 
-  CANSparkMax flywheel = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax flywheel = new CANSparkMax(52, MotorType.kBrushless);
 
-  WPI_VictorSPX intake = new WPI_VictorSPX(10);
+  WPI_VictorSPX intake = new WPI_VictorSPX(53);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -89,8 +89,8 @@ public class Robot extends TimedRobot {
 
     limelight = new Limelight();
 
-    mecanumDrive.setDeadband(0.1);
-    tankDrive.setDeadband(0.1);
+    mecanumDrive.setDeadband(0.15);
+    // tankDrive.setDeadband(0.15);
     
     frontLeftMecanum.setNeutralMode(NeutralMode.Brake);
     backLeftMecanum.setNeutralMode(NeutralMode.Brake);
@@ -157,8 +157,8 @@ public class Robot extends TimedRobot {
 
     if (joystick.getRawButtonPressed(10)) {
       boolean val = drivetrainToggle.toggleValue();
-      leftTankSolenoid.set(val);
-      rightTankSolenoid.set(val);
+      //leftTankSolenoid.set(val);
+      //rightTankSolenoid.set(val);
     }
 
     if (joystick.getRawButtonPressed(11)) {
@@ -171,8 +171,8 @@ public class Robot extends TimedRobot {
       limelight.setLedMode(ledMode.PIPELINE);
 
       drivetrainToggle.setValue(false);
-      leftTankSolenoid.set(false);
-      rightTankSolenoid.set(false);
+      //leftTankSolenoid.set(false);
+      //rightTankSolenoid.set(false);
 
       mecanumDrive.driveCartesian(0, 0, 0);
 
@@ -195,7 +195,6 @@ public class Robot extends TimedRobot {
           mecanumDrive.driveCartesian(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
         }
       }
-        
     } else {
       // Driver
       limelight.setCamMode(camMode.DRIVER);
@@ -203,17 +202,18 @@ public class Robot extends TimedRobot {
 
       if (joystick.getRawButtonPressed(10)) {
         boolean val = drivetrainToggle.toggleValue();
-        leftTankSolenoid.set(val);
-        rightTankSolenoid.set(val);
+        //leftTankSolenoid.set(val);
+        //rightTankSolenoid.set(val);
       }
-        
+      
       if (drivetrainToggle.getValue()) {
-        tankDrive.arcadeDrive(joystick.getY(), steer.getX());
+        //tankDrive.arcadeDrive(joystick.getY(), steer.getX());
       } else if (fieldtoggle.getValue()) {
-        mecanumDrive.driveCartesian(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getAngle());
+        mecanumDrive.driveCartesian(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw() + 180);
       } else {
         mecanumDrive.driveCartesian(joystick.getY(), -joystick.getX(), steer.getX());
       }
+      
     }
 
     if (xbox.getRightTriggerAxis() > 0.9) {
