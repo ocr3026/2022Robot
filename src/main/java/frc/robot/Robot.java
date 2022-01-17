@@ -193,13 +193,9 @@ public class Robot extends TimedRobot {
 
     if (joystick.getRawButton(3)) {
       flywheel.set(-1);
-    } else {
-      flywheel.set(0);
-    }
-
-    if(xbox.getAButton()) {
       intake.set(0.5);
     } else {
+      flywheel.set(0);
       intake.set(0);
     }
   }
