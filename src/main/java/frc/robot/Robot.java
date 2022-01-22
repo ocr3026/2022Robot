@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DigitalInput;  
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -72,8 +73,8 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX load = new  WPI_VictorSPX(21);
   WPI_VictorSPX kickup = new  WPI_VictorSPX(31);
 
-  boolean ballLoaded = false;
-
+  DigitalInput ballloaded = new DigitalInput(1);
+  DigitalInput ballintake = new DigitalInput(2);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -120,10 +121,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    ballLoaded = true;
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    System.out.println("Aut2o selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
@@ -195,11 +195,6 @@ public class Robot extends TimedRobot {
       }
       
     }
-
-    if (xbox.getYButtonPressed()) {
-      ballLoaded = false;
-    }
-
     if (xbox.getAButton()) {
       flywheel.set(-1);
       kickup.set(1);
@@ -207,25 +202,18 @@ public class Robot extends TimedRobot {
       flywheel.set(0);
       kickup.set(0);
     }
-
-    if (xbox.getAButtonPressed()) {
-      ballLoaded = false;
-    }
-
-    if (xbox.getBButton()){
-      if (ballLoaded == false) {
+    if (xbox.getBButton() && ballintake.get() == false){
+      if (ballloaded.get() == false){
         intake.set(1);
         load.set(1);
-      } else {
+      }
+      else {
         intake.set(1);
       }
-    } else {
+    }
+    else {
       intake.set(0);
       load.set(0);
-    }
-  
-    if(xbox.getBButtonPressed()) {
-      ballLoaded = true;
     }
   }
   /** This function is called once when the robot is disabled. */
