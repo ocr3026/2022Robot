@@ -39,7 +39,7 @@ import ocr3026.util.MecanumTankDrive;
  */
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
+  private static final String middleAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
   WPI_VictorSPX intake = new WPI_VictorSPX(53);
   WPI_VictorSPX load = new  WPI_VictorSPX(21);
-  WPI_VictorSPX kickup = new  WPI_VictorSPX(31);
+  Solenoid kickup = new  Solenoid(PneumaticsModuleType.CTREPCM, 6);
 
   DigitalInput ballloaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
+    m_chooser.addOption("My Auto", middleAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
     limelight = new Limelight();
@@ -131,14 +131,14 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Aut2o selected: " + m_autoSelected);
+    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
-      case kCustomAuto:
+      case middleAuto:
         // Put custom auto code herespeed
         break;
       case kDefaultAuto:
@@ -205,10 +205,10 @@ public class Robot extends TimedRobot {
     }
     if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(-1);
-      kickup.set(1);
+      kickup.set(true);
     } else {
       flywheel.set(0);
-      kickup.set(0);
+      kickup.set(false);
     }
     if (xbox.getBButton() && ballintake.get() == false){
       if (ballloaded.get() == false){
