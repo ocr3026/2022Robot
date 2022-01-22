@@ -11,9 +11,12 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.DigitalInput;  
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -75,6 +78,11 @@ public class Robot extends TimedRobot {
 
   DigitalInput ballloaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
+
+  WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
+  WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
+  MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
+  DoubleSolenoid climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 4);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -195,7 +203,7 @@ public class Robot extends TimedRobot {
       }
       
     }
-    if (xbox.getAButton()) {
+    if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(-1);
       kickup.set(1);
     } else {
@@ -215,7 +223,26 @@ public class Robot extends TimedRobot {
       intake.set(0);
       load.set(0);
     }
+    if (xbox.getYButton()){
+      climber.set(1);
+    }
+    else if (xbox.getXButton()){
+      climber.set(-1);
+    }
+    else{
+      climber.set(0);
+    }
+    if(xbox.getLeftBumperPressed()){
+      climberSolenoid.set(Value.kForward);
+    }
+    else if (xbox.getRightBumperPressed()){
+    climberSolenoid.set(Value.kReverse);
   }
+    else{
+    climberSolenoid.set(Value.kOff);
+  }
+
+}
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
