@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 public class MecanumTankDrive {
   private MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
   private Solenoid leftSolenoid, rightSolenoid;
-
+  private double deadband = 0;
+  
   private double deadband(double value) {
     if(value > deadband) {
       return (value - deadband) / (1 - deadband);
@@ -18,8 +19,6 @@ public class MecanumTankDrive {
       return 0;
     }
   }
-
-  public double deadband = 0;
 
   public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, Solenoid leftSolenoid, MotorController frontRight, MotorController rearRight, MotorController tankRight, Solenoid rightSolenoid) {
     this.frontLeft = frontLeft;
