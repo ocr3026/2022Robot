@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX load = new  WPI_VictorSPX(21);
   WPI_VictorSPX kickup = new  WPI_VictorSPX(31);
 
-  boolean ballloaded = false;
+  boolean ballLoaded = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    ballloaded = true;
+    ballLoaded = true;
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -195,9 +195,11 @@ public class Robot extends TimedRobot {
       }
       
     }
-    if (xbox.getYButtonPressed()){
-      ballloaded = false;
+
+    if (xbox.getYButtonPressed()) {
+      ballLoaded = false;
     }
+
     if (xbox.getAButton()) {
       flywheel.set(-1);
       kickup.set(1);
@@ -205,27 +207,26 @@ public class Robot extends TimedRobot {
       flywheel.set(0);
       kickup.set(0);
     }
-    if (xbox.getAButtonPressed()){
-      ballloaded = false;
+
+    if (xbox.getAButtonPressed()) {
+      ballLoaded = false;
     }
+
     if (xbox.getBButton()){
-      if (ballloaded == false){
+      if (ballLoaded == false) {
         intake.set(1);
         load.set(1);
-      }
-      else {
+      } else {
         intake.set(1);
       }
-    }
-    else {
+    } else {
       intake.set(0);
       load.set(0);
     }
   
-    if(xbox.getBButtonPressed()){
-      ballloaded = true;
-
-   }
+    if(xbox.getBButtonPressed()) {
+      ballLoaded = true;
+    }
   }
   /** This function is called once when the robot is disabled. */
   @Override
