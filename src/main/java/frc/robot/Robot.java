@@ -69,6 +69,10 @@ public class Robot extends TimedRobot {
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
   WPI_VictorSPX intake = new WPI_VictorSPX(53);
+  WPI_VictorSPX load = new  WPI_VictorSPX(21);
+  WPI_VictorSPX kickup = new  WPI_VictorSPX(31);
+
+  boolean ballloaded = false;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -116,6 +120,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    ballloaded = true;
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
@@ -190,16 +195,38 @@ public class Robot extends TimedRobot {
       }
       
     }
-
-    if (joystick.getRawButton(3)) {
+    if (xbox.getYButtonPressed()){
+      ballloaded = false;
+    }
+    if (xbox.getAButton()) {
       flywheel.set(-1);
-      intake.set(0.5);
+      kickup.set(1);
     } else {
       flywheel.set(0);
-      intake.set(0);
+      kickup.set(0);
     }
-  }
+    if (xbox.getAButtonPressed()){
+      ballloaded = false;
+    }
+    if (xbox.getBButton()){
+      if (ballloaded == false){
+        intake.set(1);
+        load.set(1);
+      }
+      else {
+        intake.set(1);
+      }
+    }
+    else {
+      intake.set(0);
+      load.set(0);
+    }
+  
+    if(xbox.getBButtonPressed()){
+      ballloaded = true;
 
+   }
+  }
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {

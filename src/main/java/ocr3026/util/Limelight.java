@@ -10,7 +10,7 @@ public class Limelight {
         PIPELINE, OFF, BLINK, ON
     }
 
-    public enum camMode {
+    public enum camMode { 
         VISION, DRIVER
     }
 

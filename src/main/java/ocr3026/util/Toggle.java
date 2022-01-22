@@ -6,15 +6,15 @@ public class Toggle {
     public Toggle() {}
 
     public  Toggle(boolean startingValue) {
-        this.value = startingValue;
+        value = startingValue;
     }
 
     public boolean getValue() {
         return value;
     }
 
-    public void setValue(boolean value) {
-        this.value = value;
+    public void setValue(boolean newvalue) {
+        value = newvalue;
     }
 
     public boolean toggleValue() {
