@@ -39,7 +39,9 @@ import ocr3026.util.MecanumTankDrive;
  */
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
-  private static final String middleAuto = "My Auto";
+  private static final String middleAuto = "middle";
+  private static final String leftAuto = "left";
+  private static final String rightAuto = "right";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
@@ -67,6 +69,7 @@ public class Robot extends TimedRobot {
   
   PIDController visionRotationController = new PIDController(1, 1, 1);
   PIDController visionDistanceController = new PIDController(1, 1, 1);
+  PIDController gyroscoperotation = new PIDController(1, 1, 1);
   boolean visionStage = false;
   double visionSweetArea = 0.25;
 
@@ -90,7 +93,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", middleAuto);
+    m_chooser.addOption("middle", middleAuto);
+    m_chooser.addOption("right", rightAuto);
+    m_chooser.addOption("left", leftAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
     limelight = new Limelight();
@@ -139,11 +144,48 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case middleAuto:
-        // Put custom auto code herespeed
+      limelight.setCamMode(camMode.VISION);
+      limelight.setLedMode(ledMode.PIPELINE);
+
+      drivetrain.MecanumRobotCentric(0, 0, 0);
+      if (visionStage == false) {
+        if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
+          visionStage = true;
+        } else {
+          drivetrain.MecanumRobotCentric(0, 0, visionRotationController.calculate(limelight.getTargetX()));
+        }
+        if (visionStage == true) {
+          if (limelight.getTargetArea() == visionSweetArea) {
+            visionStage = false;
+          } else {
+            drivetrain.MecanumRobotCentric(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
+          }
+        }
+      } else {
+        // Driver
+        limelight.setCamMode(camMode.DRIVER);
+        limelight.setLedMode(ledMode.OFF);
+      }
+      flywheel.set(1);
+      if(gyroscope.getYaw() <= 180){
+        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
+      }
+      else if(gyroscope.getYaw() >= 180) {
+        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
+      }
+      else {
+        drivetrain.MecanumRobotCentric(0, 1, 0);
+      }
         break;
       case kDefaultAuto:
       default:
         // Put default auto code here
+        break;
+        case rightAuto:
+        // Put custom auto code herespeed
+        break;
+        case leftAuto:
+        // Put custom auto code herespeed
         break;
     }
   }
