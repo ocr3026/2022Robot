@@ -38,12 +38,10 @@ import ocr3026.util.MecanumTankDrive;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
   private static final String middleAuto = "middle";
   private static final String leftAuto = "left";
   private static final String rightAuto = "right";
   private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private Limelight limelight;
 
@@ -92,12 +90,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("middle", middleAuto);
-    m_chooser.addOption("right", rightAuto);
-    m_chooser.addOption("left", leftAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
     limelight = new Limelight();
 
     drivetrain.setDeadband(0.15d);
@@ -134,8 +126,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
   }
 
@@ -144,48 +134,10 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case middleAuto:
-      limelight.setCamMode(camMode.VISION);
-      limelight.setLedMode(ledMode.PIPELINE);
-
-      drivetrain.MecanumRobotCentric(0, 0, 0);
-      if (visionStage == false) {
-        if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
-          visionStage = true;
-        } else {
-          drivetrain.MecanumRobotCentric(0, 0, visionRotationController.calculate(limelight.getTargetX()));
-        }
-        if (visionStage == true) {
-          if (limelight.getTargetArea() == visionSweetArea) {
-            visionStage = false;
-          } else {
-            drivetrain.MecanumRobotCentric(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
-          }
-        }
-      } else {
-        // Driver
-        limelight.setCamMode(camMode.DRIVER);
-        limelight.setLedMode(ledMode.OFF);
-      }
-      flywheel.set(1);
-      if(gyroscope.getYaw() <= 180) {
-        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else if(gyroscope.getYaw() >= 180) {
-        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        drivetrain.MecanumRobotCentric(0, 1, 0);
-      }
         break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
+      case leftAuto:
         break;
-        case rightAuto:
-        // Put custom auto code herespeed
-        break;
-        case leftAuto:
-        // Put custom auto code herespeed
+      case rightAuto:
         break;
     }
   }
@@ -245,6 +197,7 @@ public class Robot extends TimedRobot {
       }
       
     }
+
     if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(-1);
       kickup.set(true);
@@ -252,7 +205,8 @@ public class Robot extends TimedRobot {
       flywheel.set(0);
       kickup.set(false);
     }
-    if (xbox.getBButton() && ballintake.get() == false) {
+
+    if (joystick.getRawButton(3) && ballintake.get() == false) {
       if (ballloaded.get() == false) {
         intake.set(1);
         load.set(1);
@@ -265,6 +219,7 @@ public class Robot extends TimedRobot {
       intake.set(0);
       load.set(0);
     }
+
     if (xbox.getYButton()) {
       climber.set(1);
     }
@@ -274,6 +229,7 @@ public class Robot extends TimedRobot {
     else {
       climber.set(0);
     }
+
     if(xbox.getLeftBumperPressed()) {
       climberSolenoid.set(Value.kForward);
     }
@@ -282,6 +238,12 @@ public class Robot extends TimedRobot {
     }
     else {
     climberSolenoid.set(Value.kOff);
+    }
+
+    if(joystick.getRawButton(4) || xbox.getBButton()) {
+      intake.set(-1);
+    } else {
+      intake.set(0);
     }
   }
   /** This function is called once when the robot is disabled. */

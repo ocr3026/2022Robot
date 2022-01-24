@@ -74,7 +74,7 @@ public class MecanumTankDrive {
     this.deadband = deadband;
   }
 
-  public double getDeadbaand() {
+  public double getDeadband() {
     return this.deadband;
   }
 }
