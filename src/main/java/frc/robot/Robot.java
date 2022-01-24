@@ -167,7 +167,7 @@ public class Robot extends TimedRobot {
         limelight.setLedMode(ledMode.OFF);
       }
       flywheel.set(1);
-      if(gyroscope.getYaw() <= 180){
+      if(gyroscope.getYaw() <= 180) {
         drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else if(gyroscope.getYaw() >= 180) {
@@ -252,8 +252,8 @@ public class Robot extends TimedRobot {
       flywheel.set(0);
       kickup.set(false);
     }
-    if (xbox.getBButton() && ballintake.get() == false){
-      if (ballloaded.get() == false){
+    if (xbox.getBButton() && ballintake.get() == false) {
+      if (ballloaded.get() == false) {
         intake.set(1);
         load.set(1);
       }
@@ -265,26 +265,25 @@ public class Robot extends TimedRobot {
       intake.set(0);
       load.set(0);
     }
-    if (xbox.getYButton()){
+    if (xbox.getYButton()) {
       climber.set(1);
     }
-    else if (xbox.getXButton()){
+    else if (xbox.getXButton()) {
       climber.set(-1);
     }
-    else{
+    else {
       climber.set(0);
     }
-    if(xbox.getLeftBumperPressed()){
+    if(xbox.getLeftBumperPressed()) {
       climberSolenoid.set(Value.kForward);
     }
-    else if (xbox.getRightBumperPressed()){
+    else if (xbox.getRightBumperPressed()) {
     climberSolenoid.set(Value.kReverse);
-  }
-    else{
+    }
+    else {
     climberSolenoid.set(Value.kOff);
+    }
   }
-
-}
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
