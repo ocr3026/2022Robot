@@ -3,8 +3,6 @@ package ocr3026.util;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTable;
 
-
-
 public class Limelight {
     public enum ledMode{
         PIPELINE, OFF, BLINK, ON
