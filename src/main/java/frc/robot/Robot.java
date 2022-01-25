@@ -134,8 +134,9 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case middleAuto:
-      if (gyroscope.getYaw() < 185){
+  /** if (gyroscope.getYaw() < 185){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
+      }
       else if (gyroscope.getYaw() > 175){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
@@ -145,11 +146,12 @@ public class Robot extends TimedRobot {
         }
         else {
           drivetrain.MecanumRobotCentric(0, 0, 0);
+        }
       }
-
+      **/
         break;
       case leftAuto:
-      if (gyroscope.getYaw() < 150){
+      /** if (gyroscope.getYaw() < 150){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else if (gyroscope.getYaw() > 140){
@@ -163,9 +165,10 @@ public class Robot extends TimedRobot {
           drivetrain.MecanumRobotCentric(0, 0, 0);
         }
       }
+      **/
         break;
       case rightAuto:
-      if (gyroscope.getYaw() < 1230){
+      /**if (gyroscope.getYaw() < 1230){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       else if (gyroscope.getYaw() > 220){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
@@ -177,7 +180,7 @@ public class Robot extends TimedRobot {
         else {
           drivetrain.MecanumRobotCentric(0, 0, 0);
       }
-
+      **/
         break;
     }
   }
