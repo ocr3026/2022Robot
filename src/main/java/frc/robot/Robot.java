@@ -133,7 +133,7 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
       case middleAuto:
-  /** if (gyroscope.getYaw() < 185){
+      if (gyroscope.getYaw() < 185){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else if (gyroscope.getYaw() > 175){
@@ -147,10 +147,9 @@ public class Robot extends TimedRobot {
           drivetrain.MecanumRobotCentric(0, 0, 0);
         }
       }
-      **/
         break;
       case leftAuto:
-      /** if (gyroscope.getYaw() < 150){
+      if (gyroscope.getYaw() < 150){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else if (gyroscope.getYaw() > 140){
@@ -164,23 +163,21 @@ public class Robot extends TimedRobot {
           drivetrain.MecanumRobotCentric(0, 0, 0);
         }
       }
-      **/
         break;
       case rightAuto:
-      /**if (gyroscope.getYaw() < 1230){
+      if (gyroscope.getYaw() < 1230){
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      else if (gyroscope.getYaw() > 220){
+      } else if (gyroscope.getYaw() > 220) {
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else {
         if(frontLeftMecanum.getEncoder().getPosition() < 150){
           drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        }
-        else {
+        } else {
           drivetrain.MecanumRobotCentric(0, 0, 0);
-      }
-      **/
+        }
         break;
+      }
     }
   }
 
@@ -252,33 +249,27 @@ public class Robot extends TimedRobot {
       if (ballloaded.get() == false) {
         intake.set(1);
         load.set(1);
-      }
-      else {
+      } else {
         intake.set(1);
       }
-    }
-    else {
+    } else {
       intake.set(0);
       load.set(0);
     }
 
     if (xbox.getYButton()) {
       climber.set(1);
-    }
-    else if (xbox.getXButton()) {
+    } else if (xbox.getXButton()) {
       climber.set(-1);
-    }
-    else {
+    } else {
       climber.set(0);
     }
 
     if(xbox.getLeftBumperPressed()) {
       climberSolenoid.set(Value.kForward);
-    }
-    else if (xbox.getRightBumperPressed()) {
+    } else if (xbox.getRightBumperPressed()) {
     climberSolenoid.set(Value.kReverse);
-    }
-    else {
+    } else {
     climberSolenoid.set(Value.kOff);
     }
 
