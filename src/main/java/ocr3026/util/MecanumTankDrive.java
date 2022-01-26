@@ -1,13 +1,11 @@
 package ocr3026.util;
 
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 public class MecanumTankDrive {
   private MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
-  private Solenoid leftSolenoid, rightSolenoid;
 
   private double deadband(double value) {
     if(value > deadband) {
@@ -21,20 +19,16 @@ public class MecanumTankDrive {
 
   public double deadband = 0;
 
-  public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, Solenoid leftSolenoid, MotorController frontRight, MotorController rearRight, MotorController tankRight, Solenoid rightSolenoid) {
+  public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, MotorController frontRight, MotorController rearRight, MotorController tankRight) {
     this.frontLeft = frontLeft;
     this.rearLeft = rearLeft;
     this.tankLeft = tankLeft;
-    this.leftSolenoid = leftSolenoid;
     this.frontRight = frontRight;
     this.rearRight = rearRight;
     this.tankRight = tankRight;
-    this.rightSolenoid = rightSolenoid;
   }
   
   public void MecanumRobotCentric(double forwardSpeed, double rightSpeed, double rotationSpeed) {
-    leftSolenoid.set(false);
-    rightSolenoid.set(false);
 
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), 0);
     
@@ -45,8 +39,6 @@ public class MecanumTankDrive {
   }
 
   public void MecanumFieldCentric(double forwardSpeed, double rightSpeed, double rotationSpeed, double gyroAngle) {
-    leftSolenoid.set(false);
-    rightSolenoid.set(false);
 
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), gyroAngle);
     
@@ -57,8 +49,6 @@ public class MecanumTankDrive {
   }
 
   public void TankDrive(double forwardSpeed, double rotationSpeed) {
-    leftSolenoid.set(true);
-    rightSolenoid.set(true);
 
     DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(deadband(forwardSpeed), deadband(rotationSpeed), true);
 

@@ -24,6 +24,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import edu.wpi.first.wpilibj.Compressor;
 
 import ocr3026.util.Limelight;
 import ocr3026.util.Toggle;
@@ -60,10 +61,7 @@ public class Robot extends TimedRobot {
   CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
   CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
-  Solenoid leftTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
-  Solenoid rightTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
-
-  MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
+  MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, frontRightMecanum, backRightMecanum, rightTank);
   
   PIDController visionRotationController = new PIDController(1, 1, 1);
   PIDController visionDistanceController = new PIDController(1, 1, 1);
@@ -73,17 +71,20 @@ public class Robot extends TimedRobot {
 
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  WPI_VictorSPX intake = new WPI_VictorSPX(53);
-  WPI_VictorSPX load = new  WPI_VictorSPX(21);
-  Solenoid kickup = new  Solenoid(PneumaticsModuleType.CTREPCM, 6);
+  WPI_VictorSPX intake = new WPI_VictorSPX(24);
+  DoubleSolenoid kickup = new  DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
+  DoubleSolenoid intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
 
   DigitalInput ballloaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
 
+  Compressor compresser = new Compressor(1, PneumaticsModuleType.CTREPCM);
+
+
   WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
-  DoubleSolenoid climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 4);
+  // DoubleSolenoid climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 0);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -102,6 +103,8 @@ public class Robot extends TimedRobot {
     backRightMecanum.setNeutralMode(NeutralMode.Brake);
   
     CameraServer.startAutomaticCapture();
+
+    intakeSolenoid.set(Value.kForward);
   }
 
   /**
@@ -141,7 +144,7 @@ public class Robot extends TimedRobot {
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 150){
+        if(frontLeftMecanum.getEncoder().getPosition() < 305){
           drivetrain.MecanumRobotCentric(0, 0.75, 0);
         }
         else {
@@ -158,7 +161,7 @@ public class Robot extends TimedRobot {
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 150){
+        if(frontLeftMecanum.getEncoder().getPosition() < 305){
           drivetrain.MecanumRobotCentric(0, 0.75, 0);
         }
         else {
@@ -174,7 +177,7 @@ public class Robot extends TimedRobot {
         drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
       else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 150){
+        if(frontLeftMecanum.getEncoder().getPosition() < 305){
           drivetrain.MecanumRobotCentric(0, 0.75, 0);
         }
         else {
@@ -243,27 +246,25 @@ public class Robot extends TimedRobot {
 
     if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(-1);
-      kickup.set(true);
     } else {
       flywheel.set(0);
-      kickup.set(false);
+    
     }
-
-    if (joystick.getRawButton(3) && ballintake.get() == false) {
-      if (ballloaded.get() == false) {
-        intake.set(1);
-        load.set(1);
-      }
-      else {
-        intake.set(1);
-      }
+    if(xbox.getXButton()){
+      kickup.set(Value.kForward);
     }
     else {
+      kickup.set(Value.kReverse);
+    }
+    if (joystick.getRawButton(3) ) {
+      intake.set(0.25);
+    } else if(joystick.getRawButton(4)) {
+      intake.set(-0.25);
+    } else {
       intake.set(0);
-      load.set(0);
     }
 
-    if (xbox.getYButton()) {
+  /**  if (xbox.getYButton()) {
       climber.set(1);
     }
     else if (xbox.getXButton()) {
@@ -272,8 +273,8 @@ public class Robot extends TimedRobot {
     else {
       climber.set(0);
     }
-
-    if(xbox.getLeftBumperPressed()) {
+    **/
+    /**if(xbox.getLeftBumperPressed()) {
       climberSolenoid.set(Value.kForward);
     }
     else if (xbox.getRightBumperPressed()) {
@@ -282,11 +283,11 @@ public class Robot extends TimedRobot {
     else {
     climberSolenoid.set(Value.kOff);
     }
+    **/
 
-    if(joystick.getRawButton(4) || xbox.getBButton()) {
-      intake.set(-1);
-    } else {
-      intake.set(0);
+
+    if (joystick.getRawButtonPressed(5)){
+      intakeSolenoid.toggle();
     }
   }
   /** This function is called once when the robot is disabled. */
