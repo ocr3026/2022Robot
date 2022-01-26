@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -51,10 +52,10 @@ public class Robot extends TimedRobot {
 
   AHRS gyroscope = new AHRS();
 
-  WPI_VictorSPX frontLeftMecanum = new WPI_VictorSPX(29);
-  WPI_VictorSPX frontRightMecanum = new WPI_VictorSPX(6);
-  WPI_VictorSPX backLeftMecanum = new WPI_VictorSPX(22);
-  WPI_VictorSPX backRightMecanum = new WPI_VictorSPX(18);
+  CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
+  CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
+  CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
+  CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
   CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
   CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
@@ -94,10 +95,10 @@ public class Robot extends TimedRobot {
     
     frontRightMecanum.setInverted(true);
     backRightMecanum.setInverted(true);
-    frontLeftMecanum.setNeutralMode(NeutralMode.Brake);
-    backLeftMecanum.setNeutralMode(NeutralMode.Brake);
-    frontRightMecanum.setNeutralMode(NeutralMode.Brake);
-    backRightMecanum.setNeutralMode(NeutralMode.Brake);
+    frontLeftMecanum.setIdleMode(IdleMode.kBrake);
+    backLeftMecanum.setIdleMode(IdleMode.kBrake);
+    frontRightMecanum.setIdleMode(IdleMode.kBrake);
+    backRightMecanum.setIdleMode(IdleMode.kBrake);
   
     CameraServer.startAutomaticCapture();
   }
