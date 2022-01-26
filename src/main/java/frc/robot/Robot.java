@@ -58,8 +58,8 @@ public class Robot extends TimedRobot {
   CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
   CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
-  Solenoid leftTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
-  Solenoid rightTankSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 1);
+  Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+  Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
 
   MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
   
@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
-  DoubleSolenoid climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 4);
+  DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
