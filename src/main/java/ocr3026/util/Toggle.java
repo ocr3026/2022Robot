@@ -1,24 +1,25 @@
 package ocr3026.util;
 
 public class Toggle {
-    public boolean value = false;
+    private boolean on = false;
 
     public Toggle() {}
 
     public  Toggle(boolean startingValue) {
-        value = startingValue;
+        on = startingValue;
     }
 
-    public boolean getValue() {
-        return value;
+    public boolean isOn() {
+        return on;
     }
 
-    public void setValue(boolean newvalue) {
-        value = newvalue;
+    public void setToggle(boolean newValue) {
+        on = newValue;
     }
 
-    public boolean toggleValue() {
-        value = !value;
-        return value;
+    //if on, turn off and if off, turn on
+    public boolean swap() {
+        on = !on;
+        return on;
     }
 }

@@ -21,7 +21,6 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Limelight;
@@ -193,7 +192,7 @@ public class Robot extends TimedRobot {
     }
 
     if (joystick.getRawButtonPressed(2)) {
-      fieldtoggle.toggleValue();
+      fieldtoggle.swap();
     }
 
     if (xbox.getLeftTriggerAxis() > 0.9) {
@@ -229,7 +228,7 @@ public class Robot extends TimedRobot {
       
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), steer.getX());
-      } else if (fieldtoggle.getValue()) {
+      } else if (fieldtoggle.isOn()) {
         drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
       } else {
         drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
@@ -282,7 +281,7 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    fieldtoggle.setValue(false);
+    fieldtoggle.setToggle(false);
   }
 
   /** This function is called periodically when disabled. */
