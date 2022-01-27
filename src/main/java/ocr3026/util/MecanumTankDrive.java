@@ -36,6 +36,10 @@ public class MecanumTankDrive {
     leftSolenoid.set(false);
     rightSolenoid.set(false);
 
+    forwardSpeed = forwardSpeed * forwardSpeed;
+    rightSpeed = rightSpeed * rightSpeed;
+    rotationSpeed = rotationSpeed * rotationSpeed;
+
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), 0);
     
     frontLeft.set(speeds.frontLeft);
@@ -47,6 +51,10 @@ public class MecanumTankDrive {
   public void MecanumFieldCentric(double forwardSpeed, double rightSpeed, double rotationSpeed, double gyroAngle) {
     leftSolenoid.set(false);
     rightSolenoid.set(false);
+
+    forwardSpeed = forwardSpeed * forwardSpeed;
+    rightSpeed = rightSpeed * rightSpeed;
+    rotationSpeed = rotationSpeed * rotationSpeed;
 
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), gyroAngle);
     
@@ -60,7 +68,10 @@ public class MecanumTankDrive {
     leftSolenoid.set(true);
     rightSolenoid.set(true);
 
-    DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(deadband(forwardSpeed), deadband(rotationSpeed), true);
+    forwardSpeed = forwardSpeed * forwardSpeed;
+    rotationSpeed = rotationSpeed * rotationSpeed;
+
+    DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(deadband(forwardSpeed), deadband(rotationSpeed), false);
 
     frontLeft.set(speeds.left);
     rearLeft.set(speeds.left);
