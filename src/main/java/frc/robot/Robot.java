@@ -244,6 +244,14 @@ public class Robot extends TimedRobot {
       }
       
     }
+    if (joystick.getRawButtonPressed(8)) {
+      if (gyroscope.getYaw() > 181 || gyroscope.getYaw() < 179)  {
+        drivetrain.MecanumRobotCentric( 0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
+      }
+      else {
+        drivetrain.MecanumRobotCentric( 0, 0, 0);
+      }
+    }
 
     if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(-1);
