@@ -72,8 +72,8 @@ public class Robot extends TimedRobot {
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
   WPI_VictorSPX intake = new WPI_VictorSPX(24);
-  DoubleSolenoid kickup = new  DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
-  DoubleSolenoid intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+  DoubleSolenoid kickup = new  DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 6, 7);
+  DoubleSolenoid intakeSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 2, 3);
 
   DigitalInput ballloaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
@@ -105,6 +105,7 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
 
     intakeSolenoid.set(Value.kForward);
+    kickup.set(Value.kReverse);
   }
 
   /**
