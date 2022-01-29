@@ -28,6 +28,8 @@ import ocr3026.util.Toggle;
 import ocr3026.util.Limelight.camMode;
 import ocr3026.util.Limelight.ledMode;
 import ocr3026.util.MecanumTankDrive;
+import ocr3026.util.RobotAutonomous;
+import ocr3026.util.Autonomous.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -40,6 +42,8 @@ public class Robot extends TimedRobot {
   private static final String leftAuto = "left";
   private static final String rightAuto = "right";
   private String m_autoSelected;
+
+  private RobotAutonomous autonomous;
 
   private Limelight limelight;
 
@@ -124,60 +128,23 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     System.out.println("Auto selected: " + m_autoSelected);
+    switch(m_autoSelected) {
+      case "right":
+        autonomous = new RightAutonomous();
+        break;
+      case "middle":
+        autonomous = new MiddleAutonomous();
+        break;
+      case "left":
+        autonomous = new LeftAutonomous();
+        break;
+    }
+    autonomous.init();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case middleAuto:
-      if (gyroscope.getYaw() < 185){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else if (gyroscope.getYaw() > 175){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 150){
-          drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        }
-        else {
-          drivetrain.MecanumRobotCentric(0, 0, 0);
-        }
-      }
-        break;
-      case leftAuto:
-      if (gyroscope.getYaw() < 150){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else if (gyroscope.getYaw() > 140){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 150){
-          drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        }
-        else {
-          drivetrain.MecanumRobotCentric(0, 0, 0);
-        }
-      }
-        break;
-      case rightAuto:
-      if (gyroscope.getYaw() < 1230){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      } else if (gyroscope.getYaw() > 220) {
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 150){
-          drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        } else {
-          drivetrain.MecanumRobotCentric(0, 0, 0);
-        }
-        break;
-      }
-    }
-  }
+  public void autonomousPeriodic() { autonomous.periodic(); }
 
   /** This function is called once when teleop is enabled. */
   @Override
