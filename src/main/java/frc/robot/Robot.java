@@ -129,14 +129,17 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     System.out.println("Auto selected: " + m_autoSelected);
     switch(m_autoSelected) {
-      case "right":
+      case rightAuto:
         autonomous = new RightAutonomous();
         break;
-      case "middle":
+      case middleAuto:
         autonomous = new MiddleAutonomous();
         break;
-      case "left":
+      case leftAuto:
         autonomous = new LeftAutonomous();
+        break;
+      default:
+        autonomous = new MiddleAutonomous();
         break;
     }
     autonomous.init();
