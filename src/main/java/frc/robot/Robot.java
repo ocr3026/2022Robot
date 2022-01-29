@@ -64,9 +64,7 @@ public class Robot extends TimedRobot {
   MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
   
   PIDController visionRotationController = new PIDController(1, 1, 1);
-  PIDController visionDistanceController = new PIDController(1, 1, 1);
   PIDController gyroscoperotation = new PIDController(1, 1, 1);
-  boolean visionStage = false;
   double visionSweetArea = 0.25;
 
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
@@ -82,6 +80,7 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -202,24 +201,10 @@ public class Robot extends TimedRobot {
 
       drivetrain.MecanumRobotCentric(0, 0, 0);
 
-      // Phase 1: Line up rotation
-
-      if (visionStage == false) {
-        if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
-          visionStage = true;
-        } else {
-          drivetrain.MecanumRobotCentric(0, 0, visionRotationController.calculate(limelight.getTargetX()));
-        }
-      }
-
-      // Phase 2: Get to sweet spot distance
-
-      if (visionStage == true) {
-        if (limelight.getTargetArea() == visionSweetArea) {
-          visionStage = false;
-        } else {
-          drivetrain.MecanumRobotCentric(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
-        }
+      if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
+        drivetrain.MecanumRobotCentric(joystick.getY(), 0, 0);
+      } else {
+        drivetrain.MecanumRobotCentric(0, 0, visionRotationController.calculate(limelight.getTargetX()));
       }
     } else {
       // Driver
