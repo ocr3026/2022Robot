@@ -5,7 +5,7 @@ import ocr3026.util.RobotAutonomous;
 public class LeftAutonomous implements RobotAutonomous {
 	@Override
 	public void init() {
-
+    
 	}
 
 	@Override
