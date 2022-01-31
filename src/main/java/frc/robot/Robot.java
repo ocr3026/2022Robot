@@ -78,8 +78,7 @@ public class Robot extends TimedRobot {
   DigitalInput ballloaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
 
-  Compressor compresser = new Compressor(1, PneumaticsModuleType.CTREPCM);
-
+  Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
   WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
@@ -136,6 +135,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    compressor.enableDigital();
     switch (m_autoSelected) {
       case middleAuto:
   /** if (gyroscope.getYaw() < 185){
@@ -196,6 +196,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    compressor.enableDigital();
     if (joystick.getRawButtonPressed(12)) {
       gyroscope.zeroYaw();
     }
@@ -266,9 +267,9 @@ public class Robot extends TimedRobot {
       kickup.set(Value.kReverse);
     }
     if (joystick.getRawButton(3) ) {
-      intake.set(0.25);
+      intake.set(0.5);
     } else if(joystick.getRawButton(4)) {
-      intake.set(-0.25);
+      intake.set(-0.5);
     } else {
       intake.set(0);
     }
@@ -303,6 +304,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     fieldtoggle.setValue(false);
+    compressor.disable();
   }
 
   /** This function is called periodically when disabled. */
