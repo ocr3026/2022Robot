@@ -21,7 +21,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import ocr3026.util.Limelight;
 import ocr3026.util.Toggle;
@@ -44,8 +46,6 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
 
   private RobotAutonomous autonomous;
-
-  private Limelight limelight;
 
   private Toggle fieldtoggle = new Toggle();
 
@@ -91,8 +91,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    limelight = new Limelight();
-
     drivetrain.setDeadband(0.15d);
     
     frontRightMecanum.setInverted(true);
@@ -164,21 +162,9 @@ public class Robot extends TimedRobot {
     }
 
     if (xbox.getLeftTriggerAxis() > 0.9) {
-      // Vision
-      limelight.setCamMode(camMode.VISION);
-      limelight.setLedMode(ledMode.PIPELINE);
-
-      drivetrain.MecanumRobotCentric(0, 0, 0);
-
-      if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
-        drivetrain.MecanumRobotCentric(joystick.getY(), 0, 0);
-      } else {
-        drivetrain.MecanumRobotCentric(0, 0, visionRotationController.calculate(limelight.getTargetX()));
-      }
+      
     } else {
-      // Driver
-      limelight.setCamMode(camMode.DRIVER);
-      limelight.setLedMode(ledMode.OFF);
+
       
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), steer.getX());
