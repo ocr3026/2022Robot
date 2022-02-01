@@ -264,9 +264,9 @@ public class Robot extends TimedRobot {
       kickup.set(Value.kReverse);
     }
     if (joystick.getRawButton(3) ) {
-      intake.set(0.5);
+      intake.set(0.75);
     } else if(joystick.getRawButton(4)) {
-      intake.set(-0.5);
+      intake.set(-0.75);
     } else {
       intake.set(0);
     }
