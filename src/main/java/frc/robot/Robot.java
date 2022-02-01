@@ -245,7 +245,7 @@ public class Robot extends TimedRobot {
       }
       
     }
-    if (joystick.getRawButtonPressed(8)) {
+    if (joystick.getRawButton(8)) {
       if (gyroscope.getYaw() > 181 || gyroscope.getYaw() < 179)  {
         drivetrain.MecanumRobotCentric( 0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
       }
