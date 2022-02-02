@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX backRightMecanum = new WPI_VictorSPX(18);
   CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
   CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
-
+ 
   MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, frontRightMecanum, backRightMecanum, rightTank);
   
   PIDController visionRotationController = new PIDController(1, 1, 1);
@@ -243,8 +243,8 @@ public class Robot extends TimedRobot {
       
     }
     if (joystick.getRawButton(8)) {
-      if (gyroscope.getYaw() > 181 || gyroscope.getYaw() < 179)  {
-        drivetrain.MecanumRobotCentric( 0, 0, gyroscoperotation.calculate(gyroscope.getYaw()));
+      if (gyroscope.getYaw() > 190 || gyroscope.getYaw() < 170)  {
+        drivetrain.MecanumRobotCentric(0, 0, 0.5);
       }
       else {
         drivetrain.MecanumRobotCentric( 0, 0, 0);
