@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Compressor;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -26,6 +27,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import ocr3026.util.Limelight;
 import ocr3026.util.Toggle;
@@ -58,22 +61,22 @@ public class Robot extends TimedRobot {
 
   AHRS gyroscope = new AHRS();
 
-  CANSparkMax frontLeftTank = new CANSparkMax(29, MotorType.kBrushless);
-  CANSparkMax frontRightTank = new CANSparkMax(6, MotorType.kBrushless);
-  CANSparkMax backLeftTank = new CANSparkMax(22, MotorType.kBrushless);
-  CANSparkMax backRightTank = new CANSparkMax(18, MotorType.kBrushless);
-  CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
-  CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
-  MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, leftTank, backLeftTank);
-  MotorControllerGroup right = new MotorControllerGroup(frontRightTank, rightTank, backRightTank);
+  WPI_VictorSPX frontLeftTank = new WPI_VictorSPX(29);
+  WPI_VictorSPX frontRightTank = new WPI_VictorSPX(6);
+  WPI_VictorSPX backLeftTank = new WPI_VictorSPX(22);
+  WPI_VictorSPX backRightTank = new WPI_VictorSPX(18);
+  MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, backLeftTank);
+  MotorControllerGroup right = new MotorControllerGroup(frontRightTank, backRightTank);
   DifferentialDrive drivetrain = new DifferentialDrive(left, right);
   Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
   Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
+  Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
-  Encoder climberEncoder = new Encoder(0, 1);
-
-  WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
-  WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
+  WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
+  WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
+  WPI_TalonSRX leftShortClimber = new WPI_TalonSRX(100);
+  WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(101);
+  MotorControllerGroup shortClimber = new MotorControllerGroup(leftShortClimber, rightShortClimber);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
 
@@ -140,7 +143,6 @@ public class Robot extends TimedRobot {
           break;
         }
     }
-  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -150,21 +152,34 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-  
+    
 
-       // Phase 2: Get to sweet spot distance
-
-    if (xbox.getYButton() && climberEncoder.getDistance() < 19) {
+    if (xbox.getAButton()) {
+      shortClimber.set(.25);
+    }
+    else if (xbox.getBButton()) {
+      shortClimber.set(-.25);
+    }
+    else {
+      shortClimber.set(0);
+    }
+    if (xbox.getYButton() ) {
       climber.set(1);
-    } else if (xbox.getXButton() && climberEncoder.getDistance() > 2) {
+    } else if (xbox.getXButton()) {
       climber.set(-1);
-    } else {
+    } else if (xbox.getRightTriggerAxis() > .9) {
+        leftClimber.set(ControlMode.Position, 4096);
+        rightClimber.set(ControlMode.Position, 4096);
+    } else if (xbox.getLeftTriggerAxis() > 0.9) {
+      leftShortClimber.set(ControlMode.Position, 4096);
+      rightShortClimber.set(ControlMode.Position, 4096);
+    }
+    else {
       climber.set(0);
     }
-
-    if (xbox.getLeftBumperPressed() && climberEncoder.getDistance() < 19) {
+    if (xbox.getLeftBumperPressed()) {
       climberSolenoid.set(Value.kForward);
-    } else if (xbox.getRightBumperPressed() && climberEncoder.getDistance() > 2) {
+    } else if (xbox.getRightBumperPressed()) {
       climberSolenoid.set(Value.kReverse);
     } else {
       climberSolenoid.set(Value.kOff);
