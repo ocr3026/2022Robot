@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX load = new  WPI_VictorSPX(21);
   Solenoid kickup = new  Solenoid(PneumaticsModuleType.CTREPCM, 6);
 
-  DigitalInput ballloaded = new DigitalInput(1);
+  DigitalInput ballLoaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
 
   WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
@@ -167,7 +167,6 @@ public class Robot extends TimedRobot {
       } else {
         drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
       }
-      
     }
 
     if (xbox.getRightTriggerAxis() > 0.9) {
@@ -179,7 +178,7 @@ public class Robot extends TimedRobot {
     }
 
     if (joystick.getRawButton(3) && ballintake.get() == false) {
-      if (ballloaded.get() == false) {
+      if (ballLoaded.get() == false) {
         intake.set(1);
         load.set(1);
       } else {
