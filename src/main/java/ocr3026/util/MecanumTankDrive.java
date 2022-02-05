@@ -35,11 +35,15 @@ public class MecanumTankDrive {
     leftSolenoid.set(false);
     rightSolenoid.set(false);
 
+    forwardSpeed = deadband(forwardSpeed);
+    rightSpeed = deadband(rightSpeed);
+    rotationSpeed = deadband(rotationSpeed);
+
     forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
     rightSpeed = rightSpeed * Math.abs(rightSpeed);
     rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
 
-    MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), 0);
+    MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(forwardSpeed, rightSpeed, rotationSpeed, 0);
     
     frontLeft.set(speeds.frontLeft);
     rearLeft.set(speeds.rearLeft);
@@ -51,11 +55,15 @@ public class MecanumTankDrive {
     leftSolenoid.set(false);
     rightSolenoid.set(false);
 
+    forwardSpeed = deadband(forwardSpeed);
+    rightSpeed = deadband(rightSpeed);
+    rotationSpeed = deadband(rotationSpeed);
+
     forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
     rightSpeed = rightSpeed * Math.abs(rightSpeed);
     rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
 
-    MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), gyroAngle);
+    MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(forwardSpeed, rightSpeed, rotationSpeed, gyroAngle);
     
     frontLeft.set(speeds.frontLeft);
     rearLeft.set(speeds.rearLeft);
@@ -67,10 +75,13 @@ public class MecanumTankDrive {
     leftSolenoid.set(true);
     rightSolenoid.set(true);
 
+    forwardSpeed = deadband(forwardSpeed);
+    rotationSpeed = deadband(rotationSpeed);
+
     forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
     rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
 
-    DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(deadband(forwardSpeed), deadband(rotationSpeed), false);
+    DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(forwardSpeed, rotationSpeed, false);
 
     frontLeft.set(speeds.left);
     rearLeft.set(speeds.left);
