@@ -22,7 +22,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import ocr3026.util.Toggle;
 import ocr3026.util.MecanumTankDrive;

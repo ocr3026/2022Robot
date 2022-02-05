@@ -1,8 +1,6 @@
 package ocr3026.util;
 
 import ocr3026.util.Limelight;
-import ocr3026.util.Limelight.camMode;
-import ocr3026.util.Limelight.ledMode;
 import ocr3026.util.MecanumTankDrive;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -17,20 +15,20 @@ public class Vision {
     private double sweetSpot = 0.3;
 
     public Vision(MecanumTankDrive drivetrain) {
-        limelight.setCamMode(camMode.VISION);
-        limelight.setLedMode(ledMode.PIPELINE);
+        limelight.setCamMode(Limelight.camMode.VISION);
+        limelight.setLedMode(Limelight.ledMode.PIPELINE);
         drive = drivetrain;
     }
 
     public void setDriverMode() {
-        limelight.setCamMode(camMode.DRIVER);
-        limelight.setLedMode(ledMode.OFF);
+        limelight.setCamMode(Limelight.camMode.DRIVER);
+        limelight.setLedMode(Limelight.ledMode.OFF);
         visionOn = false;
     }
 
     public void setVisionMode() {
-        limelight.setCamMode(camMode.VISION);
-        limelight.setLedMode(ledMode.ON);
+        limelight.setCamMode(Limelight.camMode.VISION);
+        limelight.setLedMode(Limelight.ledMode.ON);
         visionOn = true;
     }
 
@@ -40,11 +38,11 @@ public class Vision {
 
     public void toggleVision() {
         if(visionOn) {
-            limelight.setCamMode(camMode.DRIVER);
-            limelight.setLedMode(ledMode.OFF);
+            limelight.setCamMode(Limelight.camMode.DRIVER);
+            limelight.setLedMode(Limelight.ledMode.OFF);
         } else {
-            limelight.setCamMode(camMode.VISION);
-            limelight.setLedMode(ledMode.PIPELINE);
+            limelight.setCamMode(Limelight.camMode.VISION);
+            limelight.setLedMode(Limelight.ledMode.PIPELINE);
         }
         visionOn = !visionOn;
     }
