@@ -5,7 +5,7 @@ public class Toggle {
 
     public Toggle() {}
 
-    public  Toggle(boolean startingValue) {
+    public Toggle(boolean startingValue) {
         on = startingValue;
     }
 
