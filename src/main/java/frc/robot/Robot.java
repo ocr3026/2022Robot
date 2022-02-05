@@ -70,7 +70,7 @@ public class Robot extends TimedRobot {
   Solenoid kickup = new  Solenoid(PneumaticsModuleType.CTREPCM, 6);
 
   DigitalInput ballLoaded = new DigitalInput(1);
-  DigitalInput ballintake = new DigitalInput(2);
+  DigitalInput ballIntake = new DigitalInput(2);
 
   WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
       kickup.set(false);
     }
 
-    if (joystick.getRawButton(3) && ballintake.get() == false) {
+    if (joystick.getRawButton(3) && ballIntake.get() == false) {
       if (ballLoaded.get() == false) {
         intake.set(1);
         load.set(1);
