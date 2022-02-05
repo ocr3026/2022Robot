@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 public class MecanumTankDrive {
   private final MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
   private final Solenoid leftSolenoid, rightSolenoid;
+  private double deadband = 0;
 
   private double deadband(double value) {
     if(value > deadband) {
@@ -18,8 +19,6 @@ public class MecanumTankDrive {
       return 0;
     }
   }
-
-  public double deadband = 0;
 
   public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, Solenoid leftSolenoid, MotorController frontRight, MotorController rearRight, MotorController tankRight, Solenoid rightSolenoid) {
     this.frontLeft = frontLeft;
@@ -36,9 +35,9 @@ public class MecanumTankDrive {
     leftSolenoid.set(false);
     rightSolenoid.set(false);
 
-    forwardSpeed = forwardSpeed * forwardSpeed;
-    rightSpeed = rightSpeed * rightSpeed;
-    rotationSpeed = rotationSpeed * rotationSpeed;
+    forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
+    rightSpeed = rightSpeed * Math.abs(rightSpeed);
+    rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
 
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), 0);
     
@@ -52,9 +51,9 @@ public class MecanumTankDrive {
     leftSolenoid.set(false);
     rightSolenoid.set(false);
 
-    forwardSpeed = forwardSpeed * forwardSpeed;
-    rightSpeed = rightSpeed * rightSpeed;
-    rotationSpeed = rotationSpeed * rotationSpeed;
+    forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
+    rightSpeed = rightSpeed * Math.abs(rightSpeed);
+    rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
 
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(deadband(forwardSpeed), deadband(rightSpeed), deadband(rotationSpeed), gyroAngle);
     
@@ -68,8 +67,8 @@ public class MecanumTankDrive {
     leftSolenoid.set(true);
     rightSolenoid.set(true);
 
-    forwardSpeed = forwardSpeed * forwardSpeed;
-    rotationSpeed = rotationSpeed * rotationSpeed;
+    forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
+    rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
 
     DifferentialDrive.WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(deadband(forwardSpeed), deadband(rotationSpeed), false);
 
