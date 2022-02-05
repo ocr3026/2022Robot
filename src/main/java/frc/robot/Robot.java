@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
+  double gearRatio = 133/1125;
   private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
@@ -49,19 +51,21 @@ public class Robot extends TimedRobot {
   Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
 
-  AHRS gyroscope = new AHRS();
+  public static AHRS gyroscope = new AHRS();
 
-  CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
-  CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
-  CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
-  CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
-  CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
-  CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
+  public static CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
+  public static CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
+  public static CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
+  public static CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
+  public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
+  public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
-  Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-  Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
+  public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
 
-  MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
+  static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+  static Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
+
+  public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
 
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
@@ -86,6 +90,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     drivetrain.setDeadband(0.15d);
+    frontLeftMecanum.getEncoder().setPositionConversionFactor(0.9412340788152899);
     
     frontRightMecanum.setInverted(true);
     backRightMecanum.setInverted(true);

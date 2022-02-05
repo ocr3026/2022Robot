@@ -10,6 +10,10 @@ public class MiddleAutonomous implements RobotAutonomous {
 
 	@Override
 	public void periodic() {
-		
+		//TODO first autoaim instance
+		if ()
+		if(gyroscope.getYaw() > 35 && gyroscope.getYaw() < 25) {
+			drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 30));
+		}
 	}
 }
