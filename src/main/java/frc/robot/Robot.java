@@ -5,7 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,13 +24,11 @@ import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import ocr3026.util.Limelight;
 import ocr3026.util.Toggle;
-import ocr3026.util.Limelight.camMode;
-import ocr3026.util.Limelight.ledMode;
 import ocr3026.util.MecanumTankDrive;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Autonomous.*;
+import ocr3026.util.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -66,10 +63,6 @@ public class Robot extends TimedRobot {
   Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
 
   MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
-  
-  PIDController visionRotationController = new PIDController(1, 1, 1);
-  PIDController gyroscoperotation = new PIDController(1, 1, 1);
-  double visionSweetArea = 0.25;
 
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
@@ -84,6 +77,8 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
+
+  Vision vision = new Vision(drivetrain);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -162,10 +157,10 @@ public class Robot extends TimedRobot {
     }
 
     if (xbox.getLeftTriggerAxis() > 0.9) {
-      
+      vision.setVisionMode();
+      vision.centerTarget(joystick.getY());
     } else {
-
-      
+      vision.setDriverMode();
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), steer.getX());
       } else if (fieldtoggle.isOn()) {

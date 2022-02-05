@@ -14,7 +14,7 @@ public class Vision {
     private PIDController distancePID = new PIDController(1, 0.5, 0.5);
 
     private boolean visionOn = true;
-    private double sweetSpot = 0.5;
+    private double sweetSpot = 0.3;
 
     public Vision(MecanumTankDrive drivetrain) {
         limelight.setCamMode(camMode.VISION);
@@ -49,16 +49,26 @@ public class Vision {
         visionOn = !visionOn;
     }
 
+    public void centerTarget(double forward) {
+        if(limelight.getTargetX() < 0.1 || limelight.getTargetX() > 0.1) {
+            drive.MecanumRobotCentric(0, 0, rotationPID.calculate(limelight.getTargetX(), 0));
+        } else {
+            drive.MecanumRobotCentric(forward, 0, 0);
+        }
+    }
+
     public void centerTarget() {
         if(limelight.getTargetX() < 0.1 || limelight.getTargetX() > 0.1) {
-            drive.MecanumRobotCentric(0, 0, 0);
-        } else {
             drive.MecanumRobotCentric(0, 0, rotationPID.calculate(limelight.getTargetX(), 0));
+        } else {
+            drive.MecanumRobotCentric(0, 0, 0);
         }
     }
 
     public void goToSweetSpot() {
-        if(limelight.getTargetArea() < (sweetSpot - 0.01) || limelight.getTargetArea() > (sweetSpot+ 0.01));
+        if(limelight.getTargetArea() < (sweetSpot - 0.01) || limelight.getTargetArea() > (sweetSpot+ 0.01)) {
+            drive.MecanumRobotCentric(distancePID.calculate(limelight.getTargetArea(), sweetSpot), 0, 0);
+        }
     }
 
     public double getBarValue() {
