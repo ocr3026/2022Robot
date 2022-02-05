@@ -6,8 +6,8 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 
 public class MecanumTankDrive {
-  private MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
-  private Solenoid leftSolenoid, rightSolenoid;
+  private final MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
+  private final Solenoid leftSolenoid, rightSolenoid;
 
   private double deadband(double value) {
     if(value > deadband) {
