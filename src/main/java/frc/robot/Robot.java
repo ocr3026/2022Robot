@@ -177,8 +177,8 @@ public class Robot extends TimedRobot {
       kickup.set(false);
     }
 
-    if (joystick.getRawButton(3) && ballIntake.get() == false) {
-      if (ballLoaded.get() == false) {
+    if (joystick.getRawButton(3) && !ballIntake.get()) {
+      if (!ballLoaded.get()) {
         intake.set(1);
         load.set(1);
       } else {
@@ -200,9 +200,9 @@ public class Robot extends TimedRobot {
     if(xbox.getLeftBumperPressed()) {
       climberSolenoid.set(Value.kForward);
     } else if (xbox.getRightBumperPressed()) {
-    climberSolenoid.set(Value.kReverse);
+      climberSolenoid.set(Value.kReverse);
     } else {
-    climberSolenoid.set(Value.kOff);
+      climberSolenoid.set(Value.kOff);
     }
 
     if(joystick.getRawButton(4) || xbox.getBButton()) {
