@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
   
   PIDController visionRotationController = new PIDController(1, 1, 1);
   PIDController visionDistanceController = new PIDController(1, 1, 1);
-  PIDController gyroscoperotation = new PIDController(1, 1, 1);
+  PIDController gyroscoperotation = new PIDController(1, 0, 0);
   boolean visionStage = false;
   double visionSweetArea = 0.25;
 
@@ -244,7 +244,7 @@ public class Robot extends TimedRobot {
     }
     if (joystick.getRawButton(8)) {
       if (gyroscope.getYaw() > 190 || gyroscope.getYaw() < 170)  {
-        drivetrain.MecanumRobotCentric(0, 0, 0.5);
+        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180));
       }
       else {
         drivetrain.MecanumRobotCentric( 0, 0, 0);
