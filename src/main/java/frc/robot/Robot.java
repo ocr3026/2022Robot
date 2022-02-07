@@ -33,8 +33,7 @@ import ocr3026.util.Vision;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
+ * the package after creatiforwardSpeed
  */
 public class Robot extends TimedRobot {
   private static final String middleAuto = "middle";
@@ -69,9 +68,9 @@ public class Robot extends TimedRobot {
 
   CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  WPI_VictorSPX intake = new WPI_VictorSPX(53);
-  WPI_VictorSPX load = new  WPI_VictorSPX(21);
-  Solenoid kickup = new  Solenoid(PneumaticsModuleType.CTREPCM, 6);
+  public static WPI_VictorSPX intake = new WPI_VictorSPX(53);
+  public static DoubleSolenoid kickup = new  DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 6, 7);
 
   DigitalInput ballLoaded = new DigitalInput(1);
   DigitalInput ballIntake = new DigitalInput(2);
@@ -98,6 +97,9 @@ public class Robot extends TimedRobot {
     backLeftMecanum.setIdleMode(IdleMode.kBrake);
     frontRightMecanum.setIdleMode(IdleMode.kBrake);
     backRightMecanum.setIdleMode(IdleMode.kBrake);
+
+    kickup.set(Value.kReverse);
+    intakeSolenoid.set(Value.kForward);
   
     CameraServer.startAutomaticCapture();
   }
@@ -176,22 +178,23 @@ public class Robot extends TimedRobot {
 
     if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(-1);
-      kickup.set(true);
+      kickup.set(Value.kForward);
     } else {
       flywheel.set(0);
-      kickup.set(false);
+      kickup.set(Value.kReverse);
     }
 
+    if (joystick.getRawButtonPressed(4)) {
+      intakeSolenoid.toggle();
+    }
     if (joystick.getRawButton(3) && !ballIntake.get()) {
       if (!ballLoaded.get()) {
         intake.set(1);
-        load.set(1);
       } else {
         intake.set(1);
       }
     } else {
       intake.set(0);
-      load.set(0);
     }
 
     if (xbox.getYButton()) {
