@@ -1,8 +1,5 @@
 package ocr3026.util;
 
-import ocr3026.util.Limelight;
-import ocr3026.util.MecanumTankDrive;
-
 import edu.wpi.first.math.controller.PIDController;
 
 public class Vision {
@@ -47,19 +44,23 @@ public class Vision {
         visionOn = !visionOn;
     }
 
-    public void centerTarget(double forward) {
+    public boolean centerTarget(double forward) {
         if(limelight.getTargetX() < 0.1 || limelight.getTargetX() > 0.1) {
             drive.MecanumRobotCentric(0, 0, rotationPID.calculate(limelight.getTargetX(), 0));
+            return false;
         } else {
             drive.MecanumRobotCentric(forward, 0, 0);
+            return true;
         }
     }
 
-    public void centerTarget() {
+    public boolean centerTarget() {
         if(limelight.getTargetX() < 0.1 || limelight.getTargetX() > 0.1) {
             drive.MecanumRobotCentric(0, 0, rotationPID.calculate(limelight.getTargetX(), 0));
+            return false;
         } else {
             drive.MecanumRobotCentric(0, 0, 0);
+            return true;
         }
     }
 

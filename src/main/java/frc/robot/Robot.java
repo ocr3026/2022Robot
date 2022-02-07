@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
 
-  Vision vision = new Vision(drivetrain);
+  public static Vision vision = new Vision(drivetrain);
 
   /**
    * This function is run when the robot is first started up and should be used for any

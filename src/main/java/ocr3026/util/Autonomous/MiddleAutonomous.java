@@ -10,11 +10,13 @@ public class MiddleAutonomous implements RobotAutonomous {
 	public void init() {
 		intakeSolenoid.set(Value.kForward);
 		kickup.set(Value.kReverse);
+		timer.start();
 	}
 
 	@Override
 	public void periodic() {
 		// TODO: first autoaim instance
+		timer.start();
 		if (!timer.hasElapsed(3)){
 			if(gyroscope.getYaw() > 35 && gyroscope.getYaw() < 25) {
 				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 30));

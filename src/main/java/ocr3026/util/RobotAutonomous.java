@@ -16,7 +16,8 @@ public interface RobotAutonomous {
   public static final DoubleSolenoid kickup = Robot.kickup;
   public static final DoubleSolenoid intakeSolenoid = Robot.intakeSolenoid;
   public static final VictorSPX intake = Robot.intake;
-  Timer timer = new Timer();
+  public static final Vision vision = Robot.vision;
+  public static final Timer timer = new Timer();
   //TODO Add vision to this
   public void init();
   public void periodic();
