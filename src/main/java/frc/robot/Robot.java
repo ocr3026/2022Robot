@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
 	public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank,
 			leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
 
-	CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
+	public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
 	public static WPI_VictorSPX intake = new WPI_VictorSPX(53);
 	public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);

@@ -8,28 +8,34 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 public class MiddleAutonomous implements RobotAutonomous {
 	boolean centerTargetFinished = false;
 	boolean distanceTargetFinished = false;
+	boolean visionFinished = false;
 
 	@Override
 	public void init() {
 		intakeSolenoid.set(Value.kForward);
 		kickup.set(Value.kReverse);
-		timer.start();
+		vision.setVisionMode();
 	}
 
 	@Override
 	public void periodic() {
-		if (centerTargetFinished) {
-			centerTargetFinished = vision.centerTarget();
+		if (!visionFinished) {
+			if (!centerTargetFinished) {
+				centerTargetFinished = vision.centerTarget();
+			} else {
+				centerTargetFinished = true;
+			}
+
+			if (!distanceTargetFinished) {
+				distanceTargetFinished = vision.goToSweetSpot();
+			} else {
+				distanceTargetFinished = true;
+			}
+		} else {
+			visionFinished = true;
+			timer.start();
 		}
 
-		if (distanceTargetFinished) {
-			distanceTargetFinished = vision.goToSweetSpot();
-		}
-
-		centerTargetFinished = false;
-		distanceTargetFinished = false;
-
-		timer.start();
 		if (!timer.hasElapsed(3)) {
 			if (gyroscope.getYaw() > 35 && gyroscope.getYaw() < 25) {
 				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 30));
@@ -53,16 +59,10 @@ public class MiddleAutonomous implements RobotAutonomous {
 			} else {
 				drivetrain.MecanumRobotCentric(0, 0, 0);
 			}
+		} else {
+			centerTargetFinished = false;
+			distanceTargetFinished = false;
+			visionFinished = false;
 		}
-		if (centerTargetFinished) {
-			centerTargetFinished = vision.centerTarget();
-		}
-
-		if (distanceTargetFinished) {
-			distanceTargetFinished = vision.goToSweetSpot();
-		}
-
-		centerTargetFinished = false;
-		distanceTargetFinished = false;
 	}
 }
