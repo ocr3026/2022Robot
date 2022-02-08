@@ -31,209 +31,233 @@ import ocr3026.util.Autonomous.*;
 import ocr3026.util.Vision;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * The VM is configured to automatically run this class, and to call the
+ * functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the
+ * name of this class or
  * the package after creatiforwardSpeed
  */
 public class Robot extends TimedRobot {
-  private static final String middleAuto = "middle";
-  private static final String leftAuto = "left";
-  private static final String rightAuto = "right";
-  private String m_autoSelected;
+	private static final String middleAuto = "middle";
+	private static final String leftAuto = "left";
+	private static final String rightAuto = "right";
+	private String m_autoSelected;
 
-  double gearRatio = 133/1125;
-  private RobotAutonomous autonomous;
+	double gearRatio = 133 / 1125;
+	private RobotAutonomous autonomous;
 
-  private Toggle fieldtoggle = new Toggle();
+	private Toggle fieldtoggle = new Toggle();
 
-  Joystick joystick = new Joystick(0);
-  Joystick steer = new Joystick(1);
-  XboxController xbox = new XboxController(2);
+	Joystick joystick = new Joystick(0);
+	Joystick steer = new Joystick(1);
+	XboxController xbox = new XboxController(2);
 
-  public static AHRS gyroscope = new AHRS();
+	public static AHRS gyroscope = new AHRS();
 
-  public static CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
-  public static CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
-  public static CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
-  public static CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
-  public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
-  public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
+	public static CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
+	public static CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
+	public static CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
+	public static CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
+	public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
+	public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
-  public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
+	public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
 
-  static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-  static Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
+	static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+	static Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
 
-  public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
+	public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank,
+			leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
 
-  CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
+	CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  public static WPI_VictorSPX intake = new WPI_VictorSPX(53);
-  public static DoubleSolenoid kickup = new  DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 6, 7);
+	public static WPI_VictorSPX intake = new WPI_VictorSPX(53);
+	public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+	public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 6, 7);
 
-  DigitalInput ballLoaded = new DigitalInput(1);
-  DigitalInput ballIntake = new DigitalInput(2);
+	DigitalInput ballLoaded = new DigitalInput(1);
+	DigitalInput ballIntake = new DigitalInput(2);
 
-  WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
-  WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
-  MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
-  DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
+	WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
+	WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
+	MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
+	DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
 
-  public static Vision vision = new Vision(drivetrain);
+	public static Vision vision = new Vision(drivetrain);
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
-  @Override
-  public void robotInit() {
-    drivetrain.setDeadband(0.15d);
-    frontLeftMecanum.getEncoder().setPositionConversionFactor(0.9412340788152899);
-    
-    frontRightMecanum.setInverted(true);
-    backRightMecanum.setInverted(true);
-    frontLeftMecanum.setIdleMode(IdleMode.kBrake);
-    backLeftMecanum.setIdleMode(IdleMode.kBrake);
-    frontRightMecanum.setIdleMode(IdleMode.kBrake);
-    backRightMecanum.setIdleMode(IdleMode.kBrake);
+	/**
+	 * This function is run when the robot is first started up and should be used
+	 * for any
+	 * initialization code.
+	 */
+	@Override
+	public void robotInit() {
+		drivetrain.setDeadband(0.15d);
+		frontLeftMecanum.getEncoder().setPositionConversionFactor(0.9412340788152899);
 
-    kickup.set(Value.kReverse);
-    intakeSolenoid.set(Value.kForward);
-  
-    CameraServer.startAutomaticCapture();
-  }
+		frontRightMecanum.setInverted(true);
+		backRightMecanum.setInverted(true);
+		frontLeftMecanum.setIdleMode(IdleMode.kBrake);
+		backLeftMecanum.setIdleMode(IdleMode.kBrake);
+		frontRightMecanum.setIdleMode(IdleMode.kBrake);
+		backRightMecanum.setIdleMode(IdleMode.kBrake);
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use this for items like
-   * diagnostics that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-'   * SmartDashboard integrated updating.
-   */
- @Override
-  public void robotPeriodic() {}
+		kickup.set(Value.kReverse);
+		intakeSolenoid.set(Value.kForward);
 
-  /**
-   * This autonomous (along with the chooser code above) shows how to select between different
-   * autonomous modes using the dashboard. The sendable chooser code works with the Java
-   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the chooser code and
-   * uncomment the getString line to get the auto name from the text box below the Gyro
-   *
-   * <p>You can add additional auto modes by adding additional comparisons to the switch structure
-   * below with additional strings. If using the SendableChooser make sure to add them to the
-   * chooser code above as well.
-   */
-  @Override
-  public void autonomousInit() {
-    System.out.println("Auto selected: " + m_autoSelected);
-    switch(m_autoSelected) {
-      case rightAuto:
-        autonomous = new RightAutonomous();
-        break;
-      case middleAuto:
-        autonomous = new MiddleAutonomous();
-        break;
-      case leftAuto:
-        autonomous = new LeftAutonomous();
-        break;
-      default:
-        autonomous = new MiddleAutonomous();
-        break;
-    }
-    autonomous.init();
-  }
+		CameraServer.startAutomaticCapture();
+	}
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() { autonomous.periodic(); }
-  /** This function is called once when teleop is enabled. */
-  @Override
-  public void teleopInit() {}
+	/**
+	 * This function is called every robot packet, no matter the mode. Use this for
+	 * items like
+	 * diagnostics that you want ran during disabled, autonomous, teleoperated and
+	 * test.
+	 *
+	 * <p>
+	 * This runs after the mode specific periodic functions, but before LiveWindow
+	 * and
+	 * ' * SmartDashboard integrated updating.
+	 */
+	@Override
+	public void robotPeriodic() {
+	}
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {
-    if (joystick.getRawButtonPressed(12)) {
-      gyroscope.zeroYaw();
-    }
+	/**
+	 * This autonomous (along with the chooser code above) shows how to select
+	 * between different
+	 * autonomous modes using the dashboard. The sendable chooser code works with
+	 * the Java
+	 * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
+	 * chooser code and
+	 * uncomment the getString line to get the auto name from the text box below the
+	 * Gyro
+	 *
+	 * <p>
+	 * You can add additional auto modes by adding additional comparisons to the
+	 * switch structure
+	 * below with additional strings. If using the SendableChooser make sure to add
+	 * them to the
+	 * chooser code above as well.
+	 */
+	@Override
+	public void autonomousInit() {
+		System.out.println("Auto selected: " + m_autoSelected);
+		switch (m_autoSelected) {
+			case rightAuto:
+				autonomous = new RightAutonomous();
+				break;
+			case middleAuto:
+				autonomous = new MiddleAutonomous();
+				break;
+			case leftAuto:
+				autonomous = new LeftAutonomous();
+				break;
+			default:
+				autonomous = new MiddleAutonomous();
+				break;
+		}
+		autonomous.init();
+	}
 
-    if (joystick.getRawButtonPressed(2)) {
-      fieldtoggle.swap();
-    }
+	/** This function is called periodically during autonomous. */
+	@Override
+	public void autonomousPeriodic() {
+		autonomous.periodic();
+	}
 
-    if (xbox.getLeftTriggerAxis() > 0.9) {
-      vision.setVisionMode();
-      vision.centerTarget(joystick.getY());
-    } else {
-      vision.setDriverMode();
-      if (joystick.getRawButton(1)) {
-        drivetrain.TankDrive(joystick.getY(), steer.getX());
-      } else if (fieldtoggle.isOn()) {
-        drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
-      } else {
-        drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
-      }
-    }
+	/** This function is called once when teleop is enabled. */
+	@Override
+	public void teleopInit() {
+	}
 
-    if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(-1);
-      kickup.set(Value.kForward);
-    } else {
-      flywheel.set(0);
-      kickup.set(Value.kReverse);
-    }
+	/** This function is called periodically during operator control. */
+	@Override
+	public void teleopPeriodic() {
+		if (joystick.getRawButtonPressed(12)) {
+			gyroscope.zeroYaw();
+		}
 
-    if (joystick.getRawButtonPressed(4)) {
-      intakeSolenoid.toggle();
-    }
-    if (joystick.getRawButton(3) && !ballIntake.get()) {
-      if (!ballLoaded.get()) {
-        intake.set(1);
-      } else {
-        intake.set(1);
-      }
-    } else {
-      intake.set(0);
-    }
+		if (joystick.getRawButtonPressed(2)) {
+			fieldtoggle.swap();
+		}
 
-    if (xbox.getYButton()) {
-      climber.set(1);
-    } else if (xbox.getXButton()) {
-      climber.set(-1);
-    } else {
-      climber.set(0);
-    }
+		if (xbox.getLeftTriggerAxis() > 0.9) {
+			vision.setVisionMode();
+			vision.centerTarget(joystick.getY());
+		} else {
+			vision.setDriverMode();
+			if (joystick.getRawButton(1)) {
+				drivetrain.TankDrive(joystick.getY(), steer.getX());
+			} else if (fieldtoggle.isOn()) {
+				drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
+			} else {
+				drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
+			}
+		}
 
-    if(xbox.getLeftBumperPressed()) {
-      climberSolenoid.set(Value.kForward);
-    } else if (xbox.getRightBumperPressed()) {
-      climberSolenoid.set(Value.kReverse);
-    } else {
-      climberSolenoid.set(Value.kOff);
-    }
+		if (xbox.getRightTriggerAxis() > 0.9) {
+			flywheel.set(-1);
+			kickup.set(Value.kForward);
+		} else {
+			flywheel.set(0);
+			kickup.set(Value.kReverse);
+		}
 
-    if(joystick.getRawButton(4) || xbox.getBButton()) {
-      intake.set(-1);
-    } else {
-      intake.set(0);
-    }
-  }
-  /** This function is called once when the robot is disabled. */
-  @Override
-  public void disabledInit() {
-    fieldtoggle.setToggle(false);
-  }
+		if (joystick.getRawButtonPressed(4)) {
+			intakeSolenoid.toggle();
+		}
+		if (joystick.getRawButton(3) && !ballIntake.get()) {
+			if (!ballLoaded.get()) {
+				intake.set(1);
+			} else {
+				intake.set(1);
+			}
+		} else {
+			intake.set(0);
+		}
 
-  /** This function is called periodically when disabled. */
-  @Override
-  public void disabledPeriodic() {}
+		if (xbox.getYButton()) {
+			climber.set(1);
+		} else if (xbox.getXButton()) {
+			climber.set(-1);
+		} else {
+			climber.set(0);
+		}
 
-  /** This function is called once when test mode is enabled. */
-  @Override
-  public void testInit() {}
+		if (xbox.getLeftBumperPressed()) {
+			climberSolenoid.set(Value.kForward);
+		} else if (xbox.getRightBumperPressed()) {
+			climberSolenoid.set(Value.kReverse);
+		} else {
+			climberSolenoid.set(Value.kOff);
+		}
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
+		if (joystick.getRawButton(4) || xbox.getBButton()) {
+			intake.set(-1);
+		} else {
+			intake.set(0);
+		}
+	}
+
+	/** This function is called once when the robot is disabled. */
+	@Override
+	public void disabledInit() {
+		fieldtoggle.setToggle(false);
+	}
+
+	/** This function is called periodically when disabled. */
+	@Override
+	public void disabledPeriodic() {
+	}
+
+	/** This function is called once when test mode is enabled. */
+	@Override
+	public void testInit() {
+	}
+
+	/** This function is called periodically during test mode. */
+	@Override
+	public void testPeriodic() {
+	}
 }
