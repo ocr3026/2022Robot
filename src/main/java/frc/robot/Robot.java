@@ -23,10 +23,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Compressor;
 
-import ocr3026.util.Limelight;
+import ocr3026.util.RobotAutonomous;
+import ocr3026.util.Autonomous.*; 
+import ocr3026.util.Vision;
 import ocr3026.util.Toggle;
-import ocr3026.util.Limelight.camMode;
-import ocr3026.util.Limelight.ledMode;
 import ocr3026.util.MecanumTankDrive;
 
 /**
@@ -41,7 +41,9 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
-  private Limelight limelight;
+  private Vision limelight;
+
+  private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
 
@@ -49,37 +51,39 @@ public class Robot extends TimedRobot {
   Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
 
-  AHRS gyroscope = new AHRS();
+  public static AHRS gyroscope = new AHRS();
 
-  WPI_VictorSPX frontLeftMecanum = new WPI_VictorSPX(29);
-  WPI_VictorSPX frontRightMecanum = new WPI_VictorSPX(6);
-  WPI_VictorSPX backLeftMecanum = new WPI_VictorSPX(22);
-  WPI_VictorSPX backRightMecanum = new WPI_VictorSPX(18);
-  CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
-  CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
+  public static WPI_VictorSPX frontLeftMecanum = new WPI_VictorSPX(29);
+  public static WPI_VictorSPX frontRightMecanum = new WPI_VictorSPX(6);
+  public static WPI_VictorSPX backLeftMecanum = new WPI_VictorSPX(22);
+  public static WPI_VictorSPX backRightMecanum = new WPI_VictorSPX(18);
+  public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
+  public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
  
-  MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, frontRightMecanum, backRightMecanum, rightTank);
+  public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank, frontRightMecanum, backRightMecanum, rightTank);
   
-  PIDController visionRotationController = new PIDController(1, 1, 1);
-  PIDController visionDistanceController = new PIDController(1, 1, 1);
-  PIDController gyroscoperotation = new PIDController(1, 0, 0);
-  boolean visionStage = false;
-  double visionSweetArea = 0.25;
+  public static PIDController visionRotationController = new PIDController(1, 1, 1);
+  public static PIDController visionDistanceController = new PIDController(1, 1, 1);
+  public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
+  public static boolean visionStage = false;
+  public static double visionSweetArea = 0.25;
 
-  CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
+  public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  WPI_VictorSPX intake = new WPI_VictorSPX(24);
-  DoubleSolenoid kickup = new  DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 6, 7);
-  DoubleSolenoid intakeSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 2, 3);
+  public static WPI_VictorSPX intake = new WPI_VictorSPX(24);
+  public static DoubleSolenoid kickup = new  DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 6, 7);
+  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 2, 3);
 
   DigitalInput ballloaded = new DigitalInput(1);
   DigitalInput ballintake = new DigitalInput(2);
 
-  Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
+  public static Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
   WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
   WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
+  
+  public static Vision vision = new Vision(drivetrain);
   // DoubleSolenoid climberSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 0);
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -87,7 +91,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    limelight = new Limelight();
 
     drivetrain.setDeadband(0.15d);
     
@@ -127,63 +130,27 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     System.out.println("Auto selected: " + m_autoSelected);
+		switch (m_autoSelected) {
+			case rightAuto:
+				autonomous = new RightAutonomous();
+				break;
+			case middleAuto:
+				autonomous = new MiddleAutonomous();
+				break;
+			case leftAuto:
+				autonomous = new LeftAutonomous();
+				break;
+			default:
+				autonomous = new MiddleAutonomous();
+				break;
+		}
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     compressor.enableDigital();
-    switch (m_autoSelected) {
-      case middleAuto:
-  /** if (gyroscope.getYaw() < 185){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else if (gyroscope.getYaw() > 175){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 305){
-          drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        }
-        else {
-          drivetrain.MecanumRobotCentric(0, 0, 0);
-        }
-      }
-      **/
-        break;
-      case leftAuto:
-      /** if (gyroscope.getYaw() < 150){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else if (gyroscope.getYaw() > 140){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 305){
-          drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        }
-        else {
-          drivetrain.MecanumRobotCentric(0, 0, 0);
-        }
-      }
-      **/
-        break;
-      case rightAuto:
-      /**if (gyroscope.getYaw() < 1230){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      else if (gyroscope.getYaw() > 220){
-        drivetrain.MecanumRobotCentric(0,0, gyroscoperotation.calculate(gyroscope.getYaw()));
-      }
-      else {
-        if(frontLeftMecanum.getEncoder().getPosition() < 305){
-          drivetrain.MecanumRobotCentric(0, 0.75, 0);
-        }
-        else {
-          drivetrain.MecanumRobotCentric(0, 0, 0);
-      }
-      **/
-        break;
-    }
+    autonomous.periodic();
   }
 
   /** This function is called once when teleop is enabled. */
@@ -202,36 +169,15 @@ public class Robot extends TimedRobot {
       fieldtoggle.toggleValue();
     }
 
-    if (xbox.getLeftTriggerAxis() > 0.9) {
-      // Vision
-      limelight.setCamMode(camMode.VISION);
-      limelight.setLedMode(ledMode.PIPELINE);
-
-      drivetrain.MecanumRobotCentric(0, 0, 0);
 
       // Phase 1: Line up rotation
 
-      if (visionStage == false) {
-        if (-0.1 < limelight.getTargetX() && limelight.getTargetX() < 0.1) {
-          visionStage = true;
-        } else {
-          drivetrain.MecanumRobotCentric(0, 0, visionRotationController.calculate(limelight.getTargetX()));
-        }
-      }
-
-      // Phase 2: Get to sweet spot distance
-
-      if (visionStage == true) {
-        if (limelight.getTargetArea() == visionSweetArea) {
-          visionStage = false;
-        } else {
-          drivetrain.MecanumRobotCentric(0, visionDistanceController.calculate(limelight.getTargetArea(), visionSweetArea), 0);
-        }
-      }
-    } else {
-      // Driver
-      limelight.setCamMode(camMode.DRIVER);
-      limelight.setLedMode(ledMode.OFF);
+      
+		if (xbox.getLeftTriggerAxis() > 0.9) {
+			vision.setVisionMode();
+			vision.centerTarget(joystick.getY());
+		} else {
+			vision.setDriverMode();
       
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), steer.getX());
