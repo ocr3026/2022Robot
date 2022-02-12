@@ -5,36 +5,21 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Compressor;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import ocr3026.util.Limelight;
 import ocr3026.util.Toggle;
-import ocr3026.util.Limelight.camMode;
-import ocr3026.util.Limelight.ledMode;
-import ocr3026.util.MecanumTankDrive;
+import ocr3026.util.Deadband;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -51,8 +36,6 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
-  private Limelight limelight;
-
   private Toggle fieldtoggle = new Toggle();
 
   Joystick joystick = new Joystick(0);
@@ -68,17 +51,15 @@ public class Robot extends TimedRobot {
   MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, backLeftTank);
   MotorControllerGroup right = new MotorControllerGroup(frontRightTank, backRightTank);
   DifferentialDrive drivetrain = new DifferentialDrive(left, right);
-  Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-  Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
-  Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
   WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
   WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
-  WPI_TalonSRX leftShortClimber = new WPI_TalonSRX(100);
-  WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(101);
+  WPI_TalonSRX leftShortClimber = new WPI_TalonSRX(102);
+  WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(103);
+  WPI_TalonSRX angleScrew = new WPI_TalonSRX(104);
+  
   MotorControllerGroup shortClimber = new MotorControllerGroup(leftShortClimber, rightShortClimber);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
-  DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -152,38 +133,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+    drivetrain.arcadeDrive(joystick.getY(), steer.getX(), true);
 
-    if (xbox.getAButton()) {
-      shortClimber.set(.25);
-    }
-    else if (xbox.getBButton()) {
-      shortClimber.set(-.25);
-    }
-    else {
-      shortClimber.set(0);
-    }
-    if (xbox.getYButton() ) {
-      climber.set(1);
-    } else if (xbox.getXButton()) {
-      climber.set(-1);
-    } else if (xbox.getRightTriggerAxis() > .9) {
-        leftClimber.set(ControlMode.Position, 4096);
-        rightClimber.set(ControlMode.Position, 4096);
-    } else if (xbox.getLeftTriggerAxis() > 0.9) {
-      leftShortClimber.set(ControlMode.Position, 4096);
-      rightShortClimber.set(ControlMode.Position, 4096);
-    }
-    else {
-      climber.set(0);
-    }
-    if (xbox.getLeftBumperPressed()) {
-      climberSolenoid.set(Value.kForward);
-    } else if (xbox.getRightBumperPressed()) {
-      climberSolenoid.set(Value.kReverse);
-    } else {
-      climberSolenoid.set(Value.kOff);
-    }
+	shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+	angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+
+	if(steer.getRawButton(3)) {
+		climber.set((steer.getRawAxis(2) + 1) / 2);
+	} else if(steer.getRawButton(2)) {
+		climber.set((steer.getRawAxis(2) + 1) / -2);
+	} else {
+		climber.set(0);
+	}
+
+
   }
 
   /** This function is called once when the robot is disabled. */
