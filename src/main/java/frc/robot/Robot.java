@@ -16,8 +16,6 @@ import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import ocr3026.util.Toggle;
 import ocr3026.util.Deadband;
 
@@ -44,20 +42,20 @@ public class Robot extends TimedRobot {
 
   AHRS gyroscope = new AHRS();
 
-  WPI_VictorSPX frontLeftTank = new WPI_VictorSPX(29);
-  WPI_VictorSPX frontRightTank = new WPI_VictorSPX(6);
-  WPI_VictorSPX backLeftTank = new WPI_VictorSPX(22);
-  WPI_VictorSPX backRightTank = new WPI_VictorSPX(18);
+  WPI_VictorSPX frontLeftTank = new WPI_VictorSPX(28);
+  WPI_VictorSPX frontRightTank = new WPI_VictorSPX(15);
+  WPI_VictorSPX backLeftTank = new WPI_VictorSPX(27);
+  WPI_VictorSPX backRightTank = new WPI_VictorSPX(11);
   MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, backLeftTank);
   MotorControllerGroup right = new MotorControllerGroup(frontRightTank, backRightTank);
   DifferentialDrive drivetrain = new DifferentialDrive(left, right);
 
-  WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
-  WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
-  WPI_TalonSRX leftShortClimber = new WPI_TalonSRX(102);
-  WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(103);
-  WPI_TalonSRX angleScrew = new WPI_TalonSRX(104);
-  
+  WPI_TalonSRX leftClimber = new WPI_TalonSRX(22);
+  WPI_TalonSRX rightClimber = new WPI_TalonSRX(16);
+  WPI_TalonSRX leftShortClimber = new WPI_TalonSRX(18);
+  WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(21);
+  WPI_TalonSRX angleScrew = new WPI_TalonSRX(12);
+
   MotorControllerGroup shortClimber = new MotorControllerGroup(leftShortClimber, rightShortClimber);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
 
@@ -121,9 +119,9 @@ public class Robot extends TimedRobot {
       case leftAuto:
         break;
       case rightAuto:
-          break;
-        }
+        break;
     }
+  }
 
   /** This function is called once when teleop is enabled. */
   @Override
@@ -135,18 +133,59 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     drivetrain.arcadeDrive(joystick.getY(), steer.getX(), true);
 
-	shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
-	angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+    if (leftShortClimber.getSelectedSensorPosition() > 4096 * 20) {
+      if (xbox.getLeftY() < 0) {
+        shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      } else {
+        shortClimber.set(0);
+      }
+    } else if (leftShortClimber.getSelectedSensorPosition() > 4096 * -20) {
+      if (xbox.getLeftY() > 0) {
+        shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      } else {
+        shortClimber.set(0);
+      }
+    } else {
+      shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+    }
 
-	if(steer.getRawButton(3)) {
-		climber.set((steer.getRawAxis(2) + 1) / 2);
-	} else if(steer.getRawButton(2)) {
-		climber.set((steer.getRawAxis(2) + 1) / -2);
-	} else {
-		climber.set(0);
-	}
+    if (angleScrew.getSelectedSensorPosition() > 4096 * 20) {
+      if (xbox.getRightY() < 0) {
+        angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+      } else {
+        angleScrew.set(0);
+      }
+    } else if (angleScrew.getSelectedSensorPosition() > 4096 * -20) {
+      if (xbox.getRightY() > 0) {
+        angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+      } else {
+        angleScrew.set(0);
+      }
+    } else {
+      angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+    }
 
-
+    if (leftClimber.getSelectedSensorPosition() > 7 * 4096) {
+      if (steer.getRawButton(2)) {
+        climber.set((-steer.getRawAxis(2) + 1) / -8);
+      } else {
+        climber.set(0);
+      }
+    } else if (leftClimber.getSelectedSensorPosition() < 0) {
+      if (steer.getRawButton(3)) {
+        climber.set((-steer.getRawAxis(2) + 1) / 8);
+      } else {
+        climber.set(0);
+      }
+    } else {
+      if (steer.getRawButton(3)) {
+        climber.set((-steer.getRawAxis(2) + 1) / 8);
+      } else if (steer.getRawButton(2)) {
+        climber.set((-steer.getRawAxis(2) + 1) / -8);
+      } else {
+        climber.set(0);
+      }
+    }
   }
 
   /** This function is called once when the robot is disabled. */
