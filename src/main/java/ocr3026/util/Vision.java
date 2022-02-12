@@ -1,7 +1,5 @@
 package ocr3026.util;
 
-import com.revrobotics.CANSparkMax;
-
 import edu.wpi.first.math.controller.PIDController;
 
 public class Vision {
