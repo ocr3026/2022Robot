@@ -52,11 +52,11 @@ public class Robot extends TimedRobot {
 
   WPI_TalonSRX leftClimber = new WPI_TalonSRX(22);
   WPI_TalonSRX rightClimber = new WPI_TalonSRX(16);
-  WPI_TalonSRX leftShortClimber = new WPI_TalonSRX(18);
-  WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(21);
+  WPI_TalonSRX leftInnerClimber = new WPI_TalonSRX(18);
+  WPI_TalonSRX rightInnerClimber = new WPI_TalonSRX(21);
   WPI_TalonSRX angleScrew = new WPI_TalonSRX(12);
 
-  MotorControllerGroup shortClimbers = new MotorControllerGroup(leftShortClimber, rightShortClimber);
+  MotorControllerGroup innerClimbers = new MotorControllerGroup(leftInnerClimber, rightInnerClimber);
   MotorControllerGroup climbers = new MotorControllerGroup(leftClimber, rightClimber);
 
   /**
@@ -134,20 +134,20 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     drivetrain.arcadeDrive(joystick.getY(), steer.getX(), true);
 
-    if (leftShortClimber.getSelectedSensorPosition() > 4096 * 220) {
+    if (leftInnerClimber.getSelectedSensorPosition() > 4096 * 220) {
       if (xbox.getLeftY() < 0) {
-        shortClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+        innerClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
-        shortClimbers.set(0);
+        innerClimbers.set(0);
       }
-    } else if (leftShortClimber.getSelectedSensorPosition() <= 4096 * 0) {
+    } else if (leftInnerClimber.getSelectedSensorPosition() <= 4096 * 0) {
       if (xbox.getLeftY() > 0) {
-        shortClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+        innerClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
-        shortClimbers.set(0);
+        innerClimbers.set(0);
       }
     } else {
-      shortClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      innerClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
     }
 
     if (angleScrew.getSelectedSensorPosition() > 4096 * 20) {
