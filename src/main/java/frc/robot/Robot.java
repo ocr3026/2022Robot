@@ -85,6 +85,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println(angleScrew.getSelectedSensorPosition());
   }
 
   /**
@@ -133,13 +134,13 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     drivetrain.arcadeDrive(joystick.getY(), steer.getX(), true);
 
-    if (leftShortClimber.getSelectedSensorPosition() > 4096 * 20) {
+    if (leftShortClimber.getSelectedSensorPosition() > 4096 * 220) {
       if (xbox.getLeftY() < 0) {
         shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
         shortClimber.set(0);
       }
-    } else if (leftShortClimber.getSelectedSensorPosition() > 4096 * -20) {
+    } else if (leftShortClimber.getSelectedSensorPosition() <= 4096 * 0) {
       if (xbox.getLeftY() > 0) {
         shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
@@ -155,7 +156,7 @@ public class Robot extends TimedRobot {
       } else {
         angleScrew.set(0);
       }
-    } else if (angleScrew.getSelectedSensorPosition() > 4096 * -20) {
+    } else if (angleScrew.getSelectedSensorPosition() < 0) {
       if (xbox.getRightY() > 0) {
         angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
       } else {
@@ -165,23 +166,23 @@ public class Robot extends TimedRobot {
       angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
     }
 
-    if (leftClimber.getSelectedSensorPosition() > 7 * 4096) {
-      if (steer.getRawButton(2)) {
-        climber.set((-steer.getRawAxis(2) + 1) / -8);
+    if (leftClimber.getSelectedSensorPosition() < -30000) {
+      if (steer.getRawButton(3)) {
+        climber.set((-steer.getRawAxis(2) + 1) / -2);
       } else {
         climber.set(0);
       }
-    } else if (leftClimber.getSelectedSensorPosition() < 0) {
-      if (steer.getRawButton(3)) {
-        climber.set((-steer.getRawAxis(2) + 1) / 8);
+    } else if (leftClimber.getSelectedSensorPosition() > 0) {
+      if (steer.getRawButton(2)) {
+        climber.set((-steer.getRawAxis(2) + 1) / 2);
       } else {
         climber.set(0);
       }
     } else {
-      if (steer.getRawButton(3)) {
-        climber.set((-steer.getRawAxis(2) + 1) / 8);
-      } else if (steer.getRawButton(2)) {
-        climber.set((-steer.getRawAxis(2) + 1) / -8);
+      if (steer.getRawButton(2)) {
+        climber.set((-steer.getRawAxis(2) + 1) / 2);
+      } else if (steer.getRawButton(3)) {
+        climber.set((-steer.getRawAxis(2) + 1) / -2);
       } else {
         climber.set(0);
       }
