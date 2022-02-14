@@ -41,8 +41,6 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
-  private Vision limelight;
-
   private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
