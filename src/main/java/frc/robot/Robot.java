@@ -56,8 +56,8 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX rightShortClimber = new WPI_TalonSRX(21);
   WPI_TalonSRX angleScrew = new WPI_TalonSRX(12);
 
-  MotorControllerGroup shortClimber = new MotorControllerGroup(leftShortClimber, rightShortClimber);
-  MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
+  MotorControllerGroup shortClimbers = new MotorControllerGroup(leftShortClimber, rightShortClimber);
+  MotorControllerGroup climbers = new MotorControllerGroup(leftClimber, rightClimber);
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    System.out.println(angleScrew.getSelectedSensorPosition());
+    System.out.println(leftClimber.getSelectedSensorPosition());
   }
 
   /**
@@ -136,18 +136,18 @@ public class Robot extends TimedRobot {
 
     if (leftShortClimber.getSelectedSensorPosition() > 4096 * 220) {
       if (xbox.getLeftY() < 0) {
-        shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+        shortClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
-        shortClimber.set(0);
+        shortClimbers.set(0);
       }
     } else if (leftShortClimber.getSelectedSensorPosition() <= 4096 * 0) {
       if (xbox.getLeftY() > 0) {
-        shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+        shortClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
-        shortClimber.set(0);
+        shortClimbers.set(0);
       }
     } else {
-      shortClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      shortClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
     }
 
     if (angleScrew.getSelectedSensorPosition() > 4096 * 20) {
@@ -168,23 +168,23 @@ public class Robot extends TimedRobot {
 
     if (leftClimber.getSelectedSensorPosition() < -30000) {
       if (steer.getRawButton(3)) {
-        climber.set((-steer.getRawAxis(2) + 1) / -2);
+        climbers.set((-steer.getRawAxis(2) + 1) / -2);
       } else {
-        climber.set(0);
+        climbers.set(0);
       }
     } else if (leftClimber.getSelectedSensorPosition() > 0) {
       if (steer.getRawButton(2)) {
-        climber.set((-steer.getRawAxis(2) + 1) / 2);
+        climbers.set((-steer.getRawAxis(2) + 1) / 2);
       } else {
-        climber.set(0);
+        climbers.set(0);
       }
     } else {
       if (steer.getRawButton(2)) {
-        climber.set((-steer.getRawAxis(2) + 1) / 2);
+        climbers.set((-steer.getRawAxis(2) + 1) / 2);
       } else if (steer.getRawButton(3)) {
-        climber.set((-steer.getRawAxis(2) + 1) / -2);
+        climbers.set((-steer.getRawAxis(2) + 1) / -2);
       } else {
-        climber.set(0);
+        climbers.set(0);
       }
     }
   }
