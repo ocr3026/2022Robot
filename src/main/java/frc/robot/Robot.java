@@ -17,11 +17,12 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
-
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Toggle;
@@ -61,6 +62,8 @@ public class Robot extends TimedRobot {
 	public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
 	public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
+  RelativeEncoder encoder = frontLeftMecanum.getEncoder();
+
 	public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
 
 	static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
@@ -78,10 +81,15 @@ public class Robot extends TimedRobot {
 	DigitalInput ballLoaded = new DigitalInput(1);
 	DigitalInput ballIntake = new DigitalInput(2);
 
-	WPI_VictorSPX leftClimber = new WPI_VictorSPX(100);
-	WPI_VictorSPX rightClimber = new WPI_VictorSPX(101);
+	WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
+	WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
 	MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
-	DoubleSolenoid climberSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 4);
+
+  WPI_TalonSRX innerLeftClimber = new WPI_TalonSRX(102);
+  WPI_TalonSRX innerRightClimber = new WPI_TalonSRX(103);
+	MotorControllerGroup innerClimber = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
+
+  WPI_TalonSRX angleScrew = new WPI_TalonSRX(104);
 
 	public static Vision vision = new Vision(drivetrain);
 
