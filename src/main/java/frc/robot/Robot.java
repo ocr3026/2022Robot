@@ -43,9 +43,9 @@ public class Robot extends TimedRobot {
   AHRS gyroscope = new AHRS();
 
   WPI_VictorSPX frontLeftTank = new WPI_VictorSPX(28);
-  WPI_VictorSPX frontRightTank = new WPI_VictorSPX(15);
+  WPI_TalonSRX frontRightTank = new WPI_TalonSRX(15);
   WPI_VictorSPX backLeftTank = new WPI_VictorSPX(27);
-  WPI_VictorSPX backRightTank = new WPI_VictorSPX(11);
+  WPI_TalonSRX backRightTank = new WPI_TalonSRX(11);
   MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, backLeftTank);
   MotorControllerGroup right = new MotorControllerGroup(frontRightTank, backRightTank);
   DifferentialDrive drivetrain = new DifferentialDrive(left, right);
