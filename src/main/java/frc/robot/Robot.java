@@ -167,10 +167,6 @@ public class Robot extends TimedRobot {
       fieldtoggle.toggleValue();
     }
 
-
-      // Phase 1: Line up rotation
-
-      
 		if (xbox.getLeftTriggerAxis() > 0.9) {
 			vision.setVisionMode();
 			vision.centerTarget(joystick.getY());
@@ -214,28 +210,6 @@ public class Robot extends TimedRobot {
     } else {
       intake.set(0);
     }
-
-  /**  if (xbox.getYButton()) {
-      climber.set(1);
-    }
-    else if (xbox.getXButton()) {
-      climber.set(-1);
-    }
-    else {
-      climber.set(0);
-    }
-    **/
-    /**if(xbox.getLeftBumperPressed()) {
-      climberSolenoid.set(Value.kForward);
-    }
-    else if (xbox.getRightBumperPressed()) {
-    climberSolenoid.set(Value.kReverse);
-    }
-    else {
-    climberSolenoid.set(Value.kOff);
-    }
-    **/
-
 
     if (joystick.getRawButtonPressed(5)){
       intakeSolenoid.toggle();
