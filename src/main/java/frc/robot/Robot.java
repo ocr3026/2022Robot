@@ -132,6 +132,15 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    
+    if (joystick.getRawButtonPressed(13)) {
+      leftClimber.setSelectedSensorPosition(0);
+      rightClimber.setSelectedSensorPosition(0);
+      leftInnerClimber.setSelectedSensorPosition(0);
+      rightClimber.setSelectedSensorPosition(0)
+      angleScrew.setSelectedSensorPosition(0);
+    }
+    
     drivetrain.arcadeDrive(joystick.getY(), steer.getX(), true);
 
     if (leftInnerClimber.getSelectedSensorPosition() > 4096 * 220) {
@@ -166,7 +175,7 @@ public class Robot extends TimedRobot {
       angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
     }
 
-    if (leftClimber.getSelectedSensorPosition() < -30000) {
+    if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
       if (steer.getRawButton(3)) {
         climbers.set((-steer.getRawAxis(2) + 1) / -2);
       } else {
