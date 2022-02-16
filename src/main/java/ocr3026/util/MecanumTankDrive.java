@@ -10,7 +10,7 @@ public class MecanumTankDrive {
   private final Solenoid leftSolenoid, rightSolenoid;
   private double deadband = 0;
 
-  private double deadband(double value) {
+  public double deadband(double value) {
     if(value > deadband) {
       return (value - deadband) / (1 - deadband);
     } else if(value < -deadband) {

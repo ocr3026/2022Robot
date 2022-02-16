@@ -43,11 +43,11 @@ public class RightAutonomous implements RobotAutonomous {
 			}
 		} else if (timer.hasElapsed(3) && !timer.hasElapsed(8)) {
 		}
-		if (frontLeftMecanum.getEncoder().getPosition() < 1.027176) {
+		if (encoder.getPosition() < 1.027176) {
 			intakeSolenoid.set(Value.kReverse);
 			intake.set(ControlMode.PercentOutput, 0.5);
 			drivetrain.MecanumRobotCentric(.5, 0, 0);
-		} else if (frontLeftMecanum.getEncoder().getPosition() > 1.027176) {
+		} else if (encoder.getPosition() > 1.027176) {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
 			intake.set(ControlMode.PercentOutput, 0);
 			intakeSolenoid.set(Value.kForward);

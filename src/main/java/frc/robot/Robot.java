@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import ocr3026.Deadband;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -22,6 +24,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -39,149 +42,163 @@ import ocr3026.util.Vision;
  * the package after creatiforwardSpeed
  */
 public class Robot extends TimedRobot {
-	private static final String middleAuto = "middle";
-	private static final String leftAuto = "left";
-	private static final String rightAuto = "right";
-	private String m_autoSelected;
+  private static final String middleAuto = "middle";
+  private static final String leftAuto = "left";
+  private static final String rightAuto = "right";
+  private String m_autoSelected;
 
-	double gearRatio = 133 / 1125;
-	private RobotAutonomous autonomous;
+  double gearRatio = 133 / 1125;
+  private RobotAutonomous autonomous;
 
-	private Toggle fieldtoggle = new Toggle();
+  private Toggle fieldtoggle = new Toggle();
 
-	Joystick joystick = new Joystick(0);
-	Joystick steer = new Joystick(1);
-	XboxController xbox = new XboxController(2);
+  Joystick joystick = new Joystick(0);
+  Joystick steer = new Joystick(1);
+  XboxController xbox = new XboxController(2);
 
-	public static AHRS gyroscope = new AHRS();
+  public static AHRS gyroscope = new AHRS();
 
-	public static CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
-	public static CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
-	public static CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
-	public static CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
-	public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
-	public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
+  public static CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
+  public static CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
+  public static CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
+  public static CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
+  public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
+  public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
 
-  RelativeEncoder encoder = frontLeftMecanum.getEncoder();
+  public static RelativeEncoder encoder = frontLeftMecanum.getEncoder();
 
-	public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
+  public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
 
-	static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-	static Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
+  static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
+  static Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
 
-	public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank,
-			leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
+  public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank,
+      leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
 
-	public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
+  public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-	public static WPI_VictorSPX intake = new WPI_VictorSPX(53);
-	public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-	public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 6, 7);
+  public static WPI_VictorSPX intake = new WPI_VictorSPX(24);
+  public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
+  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 6, 7);
+  Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
-	DigitalInput ballLoaded = new DigitalInput(1);
-	DigitalInput ballIntake = new DigitalInput(2);
+  DigitalInput ballLoaded = new DigitalInput(1);
+  DigitalInput ballIntake = new DigitalInput(2);
 
-	WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
-	WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
-	MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
+  WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
+  WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
+  MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
 
   WPI_TalonSRX innerLeftClimber = new WPI_TalonSRX(102);
   WPI_TalonSRX innerRightClimber = new WPI_TalonSRX(103);
-	MotorControllerGroup innerClimber = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
+  MotorControllerGroup innerClimber = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
   WPI_TalonSRX angleScrew = new WPI_TalonSRX(104);
 
-	public static Vision vision = new Vision(drivetrain);
+  public static Vision vision = new Vision(drivetrain);
 
-	/**
-	 * This function is run when the robot is first started up and should be used
-	 * for any
-	 * initialization code.
-	 */
-	@Override
-	public void robotInit() {
-		drivetrain.setDeadband(0.15d);
-		frontLeftMecanum.getEncoder().setPositionConversionFactor(0.9412340788152899);
+  /**
+   * This function is run when the robot is first started up and should be used
+   * for any
+   * initialization code.
+   */
+  @Override
+  public void robotInit() {
+    drivetrain.setDeadband(0.15d);
+    encoder.setPositionConversionFactor(0.9412340788152899);
 
-		frontRightMecanum.setInverted(true);
-		backRightMecanum.setInverted(true);
-		frontLeftMecanum.setIdleMode(IdleMode.kBrake);
-		backLeftMecanum.setIdleMode(IdleMode.kBrake);
-		frontRightMecanum.setIdleMode(IdleMode.kBrake);
-		backRightMecanum.setIdleMode(IdleMode.kBrake);
+    frontRightMecanum.setInverted(true);
+    backRightMecanum.setInverted(true);
+    frontLeftMecanum.setIdleMode(IdleMode.kBrake);
+    backLeftMecanum.setIdleMode(IdleMode.kBrake);
+    frontRightMecanum.setIdleMode(IdleMode.kBrake);
+    backRightMecanum.setIdleMode(IdleMode.kBrake);
 
-		kickup.set(Value.kReverse);
-		intakeSolenoid.set(Value.kForward);
+    intake.setNeutralMode(NeutralMode.Brake);
+    flywheel.setIdleMode(IdleMode.kBrake);
 
-		CameraServer.startAutomaticCapture();
-	}
+    kickup.set(Value.kReverse);
+    intakeSolenoid.set(Value.kForward);
 
-	/**
-	 * This function is called every robot packet, no matter the mode. Use this for
-	 * items like
-	 * diagnostics that you want ran during disabled, autonomous, teleoperated and
-	 * test.
-	 *
-	 * <p>
-	 * This runs after the mode specific periodic functions, but before LiveWindow
-	 * and
-	 * ' * SmartDashboard integrated updating.
-	 */
-	@Override
-	public void robotPeriodic() {
-	}
+    CameraServer.startAutomaticCapture();
+  }
 
-	/**
-	 * This autonomous (along with the chooser code above) shows how to select
-	 * between different
-	 * autonomous modes using the dashboard. The sendable chooser code works with
-	 * the Java
-	 * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
-	 * chooser code and
-	 * uncomment the getString line to get the auto name from the text box below the
-	 * Gyro
-	 *
-	 * <p>
-	 * You can add additional auto modes by adding additional comparisons to the
-	 * switch structure
-	 * below with additional strings. If using the SendableChooser make sure to add
-	 * them to the
-	 * chooser code above as well.
-	 */
-	@Override
-	public void autonomousInit() {
-		System.out.println("Auto selected: " + m_autoSelected);
-		switch (m_autoSelected) {
-			case rightAuto:
-				autonomous = new RightAutonomous();
-				break;
-			case middleAuto:
-				autonomous = new MiddleAutonomous();
-				break;
-			case leftAuto:
-				autonomous = new LeftAutonomous();
-				break;
-			default:
-				autonomous = new MiddleAutonomous();
-				break;
-		}
-		autonomous.init();
-	}
+  /**
+   * This function is called every robot packet, no matter the mode. Use this for
+   * items like
+   * diagnostics that you want ran during disabled, autonomous, teleoperated and
+   * test.
+   *
+   * <p>
+   * This runs after the mode specific periodic functions, but before LiveWindow
+   * and
+   * ' * SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() {
+  }
 
-	/** This function is called periodically during autonomous. */
-	@Override
-	public void autonomousPeriodic() {
-		autonomous.periodic();
-	}
+  /**
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different
+   * autonomous modes using the dashboard. The sendable chooser code works with
+   * the Java
+   * SmartDashboard. If you prefer the LabVIEW Dashboard, remove all of the
+   * chooser code and
+   * uncomment the getString line to get the auto name from the text box below the
+   * Gyro
+   *
+   * <p>
+   * You can add additional auto modes by adding additional comparisons to the
+   * switch structure
+   * below with additional strings. If using the SendableChooser make sure to add
+   * them to the
+   * chooser code above as well.
+   */
+  @Override
+  public void autonomousInit() {
+    System.out.println("Auto selected: " + m_autoSelected);
+    switch (m_autoSelected) {
+      case rightAuto:
+        autonomous = new RightAutonomous();
+        break;
+      case middleAuto:
+        autonomous = new MiddleAutonomous();
+        break;
+      case leftAuto:
+        autonomous = new LeftAutonomous();
+        break;
+      default:
+        autonomous = new MiddleAutonomous();
+        break;
+    }
+    autonomous.init();
+  }
 
-	/** This function is called once when teleop is enabled. */
-	@Override
-	public void teleopInit() {
-	}
+  /** This function is called periodically during autonomous. */
+  @Override
+  public void autonomousPeriodic() {
+    autonomous.periodic();
+    compressor.enableDigital();
+  }
 
-	/** This function is called periodically during operator control. */
+  /** This function is called once when teleop is enabled. */
+  @Override
+  public void teleopInit() {
+  }
+
+  /** This function is called periodically during operator control. */
 	@Override
 	public void teleopPeriodic() {
+    if (joystick.getRawButtonPressed(13)) {
+      leftClimber.setSelectedSensorPosition(0);
+      rightClimber.setSelectedSensorPosition(0);
+      innerLeftClimber.setSelectedSensorPosition(0);
+      innerRightClimber.setSelectedSensorPosition(0);
+      angleScrew.setSelectedSensorPosition(0);
+
+    }
+    compressor.enableDigital();
 		if (joystick.getRawButtonPressed(12)) {
 			gyroscope.zeroYaw();
 		}
@@ -206,66 +223,102 @@ public class Robot extends TimedRobot {
 
 		if (xbox.getRightTriggerAxis() > 0.9) {
 			flywheel.set(-1);
-			kickup.set(Value.kForward);
 		} else {
 			flywheel.set(0);
-			kickup.set(Value.kReverse);
 		}
 
-		if (joystick.getRawButtonPressed(4)) {
+    if (xbox.getXButtonPressed()) {
+      kickup.set(Value.kForward);
+    }
+    else {
+      kickup.set(Value.kReverse);
+    }
+
+		if (joystick.getRawButtonPressed(5)) {
 			intakeSolenoid.toggle();
 		}
-		if (joystick.getRawButton(3) && !ballIntake.get()) {
-			if (!ballLoaded.get()) {
-				intake.set(1);
-			} else {
-				intake.set(1);
-			}
-		} else {
-			intake.set(0);
-		}
+    if (joystick.getRawButton(3) ) {
+      intake.set(0.75);
+    } else if(joystick.getRawButton(4)) {
+      intake.set(-0.75);
+    } else {
+      intake.set(0);
+    }
+    
+    if (innerLeftClimber.getSelectedSensorPosition() > 4096 * 220) {
+      if (xbox.getLeftY() < 0) {
+        innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      } else {
+        innerClimber.set(0);
+      }
+    } else if (innerLeftClimber.getSelectedSensorPosition() <= 4096 * 0) {
+      if (xbox.getLeftY() > 0) {
+        innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      } else {
+        innerClimber.set(0);
+      }
+    } else {
+      innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+    }
 
-		if (xbox.getYButton()) {
-			climber.set(1);
-		} else if (xbox.getXButton()) {
-			climber.set(-1);
-		} else {
-			climber.set(0);
-		}
+    if (angleScrew.getSelectedSensorPosition() > 4096 * 20) {
+      if (xbox.getRightY() < 0) {
+        angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+      } else {
+        angleScrew.set(0);
+      }
+    } else if (angleScrew.getSelectedSensorPosition() < 0) {
+      if (xbox.getRightY() > 0) {
+        angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+      } else {
+        angleScrew.set(0);
+      }
+    } else {
+      angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
+    }
 
-		if (xbox.getLeftBumperPressed()) {
-			climberSolenoid.set(Value.kForward);
-		} else if (xbox.getRightBumperPressed()) {
-			climberSolenoid.set(Value.kReverse);
-		} else {
-			climberSolenoid.set(Value.kOff);
-		}
-
-		if (joystick.getRawButton(4) || xbox.getBButton()) {
-			intake.set(-1);
-		} else {
-			intake.set(0);
-		}
+    if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
+      if (steer.getRawButton(3)) {
+        climber.set((-steer.getRawAxis(2) + 1) / -2);
+      } else {
+        climber.set(0);
+      }
+    } else if (leftClimber.getSelectedSensorPosition() > 0) {
+      if (steer.getRawButton(2)) {
+        climber.set((-steer.getRawAxis(2) + 1) / 2);
+      } else {
+        climber.set(0);
+      }
+    } else {
+      if (steer.getRawButton(2)) {
+        climber.set((-steer.getRawAxis(2) + 1) / 2);
+      } else if (steer.getRawButton(3)) {
+        climber.set((-steer.getRawAxis(2) + 1) / -2);
+      } else {
+        climber.set(0);
+      }
+    }
 	}
 
-	/** This function is called once when the robot is disabled. */
-	@Override
-	public void disabledInit() {
-		fieldtoggle.setToggle(false);
-	}
+  /** This function is called once when the robot is disabled. */
+  @Override
+  public void disabledInit() {
+    fieldtoggle.setToggle(false);
+    compressor.disable();
+  }
 
-	/** This function is called periodically when disabled. */
-	@Override
-	public void disabledPeriodic() {
-	}
+  /** This function is called periodically when disabled. */
+  @Override
+  public void disabledPeriodic() {
+  }
 
-	/** This function is called once when test mode is enabled. */
-	@Override
-	public void testInit() {
-	}
+  /** This function is called once when test mode is enabled. */
+  @Override
+  public void testInit() {
+  }
 
-	/** This function is called periodically during test mode. */
-	@Override
-	public void testPeriodic() {
-	}
+  /** This function is called periodically during test mode. */
+  @Override
+  public void testPeriodic() {
+  }
 }
