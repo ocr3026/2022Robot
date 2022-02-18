@@ -62,11 +62,11 @@ public class Robot extends TimedRobot {
   
   public static PIDController visionRotationController = new PIDController(1, 1, 1);
   public static PIDController visionDistanceController = new PIDController(1, 1, 1);
-  public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
+  public static PIDController gyroscoperotation = new PIDController(0.11, 0, 0);
   public static boolean visionStage = false;
   public static double visionSweetArea = 0.25;
 
-  public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
+  public static CANSparkMax flywhel = new CANSparkMax(37, MotorType.kBrushless);
 
   public static WPI_VictorSPX intake = new WPI_VictorSPX(24);
   public static DoubleSolenoid kickup = new  DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 6, 7);
@@ -100,6 +100,7 @@ public class Robot extends TimedRobot {
     backRightMecanum.setNeutralMode(NeutralMode.Brake);
   
     CameraServer.startAutomaticCapture();
+
 
     intakeSolenoid.set(Value.kForward);
     kickup.set(Value.kReverse);
@@ -191,12 +192,6 @@ public class Robot extends TimedRobot {
       }
     }
 
-    if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(-1);
-    } else {
-      flywheel.set(0);
-    
-    }
     if(xbox.getXButton()){
       kickup.set(Value.kForward);
     }
