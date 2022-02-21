@@ -14,6 +14,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import com.kauailabs.navx.frc.AHRS;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import ocr3026.util.Toggle;
@@ -34,7 +35,7 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
-  private Toggle fieldtoggle = new Toggle();
+  Toggle limitsOverridden = new Toggle(false);
 
   Joystick joystick = new Joystick(0);
   Joystick steer = new Joystick(1);
@@ -66,6 +67,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    leftInnerClimber.setNeutralMode(NeutralMode.Brake);
+    rightInnerClimber.setNeutralMode(NeutralMode.Brake);
 
     drivetrain.setDeadband(0.15d);
 
@@ -85,7 +88,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    System.out.println(leftClimber.getSelectedSensorPosition());
+    System.out.println(angleScrew.getSelectedSensorPosition());
   }
 
   /**
@@ -132,62 +135,83 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
-    if (joystick.getRawButtonPressed(13)) {
+    if (joystick.getRawButtonPressed(7)) {
       leftClimber.setSelectedSensorPosition(0);
       rightClimber.setSelectedSensorPosition(0);
       leftInnerClimber.setSelectedSensorPosition(0);
-      rightClimber.setSelectedSensorPosition(0)
+      rightClimber.setSelectedSensorPosition(0);
       angleScrew.setSelectedSensorPosition(0);
     }
-    
-    drivetrain.arcadeDrive(joystick.getY(), steer.getX(), true);
 
-    if (leftInnerClimber.getSelectedSensorPosition() > 4096 * 220) {
-      if (xbox.getLeftY() < 0) {
-        innerClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
-      } else {
-        innerClimbers.set(0);
-      }
-    } else if (leftInnerClimber.getSelectedSensorPosition() <= 4096 * 0) {
-      if (xbox.getLeftY() > 0) {
-        innerClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
-      } else {
-        innerClimbers.set(0);
-      }
-    } else {
-      innerClimbers.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+    if(joystick.getRawButtonPressed(8)) {
+      System.out.println("Limits toggled to" + limitsOverridden.swap());
     }
 
-    if (angleScrew.getSelectedSensorPosition() > 4096 * 20) {
-      if (xbox.getRightY() < 0) {
-        angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
-      } else {
-        angleScrew.set(0);
-      }
-    } else if (angleScrew.getSelectedSensorPosition() < 0) {
-      if (xbox.getRightY() > 0) {
-        angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
-      } else {
-        angleScrew.set(0);
-      }
-    } else {
-      angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
-    }
+    drivetrain.arcadeDrive(steer.getX(), joystick.getY(), true);
 
-    if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
-      if (steer.getRawButton(3)) {
-        climbers.set((-steer.getRawAxis(2) + 1) / -2);
+    if (!limitsOverridden.isOn()) {
+      if (leftInnerClimber.getSelectedSensorPosition() > 4096 * 220) {
+        if (xbox.getLeftY() < 0) {
+          leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.5);
+          rightInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.6);
+        } else {
+          innerClimbers.set(0);
+        }
+      } else if (leftInnerClimber.getSelectedSensorPosition() <= 4096 * 0) {
+        if (xbox.getLeftY() > 0) {
+          leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.5);
+          rightInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.6);
+        } else {
+          innerClimbers.set(0);
+        }
       } else {
-        climbers.set(0);
+        leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.5);
+        rightInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.6);
       }
-    } else if (leftClimber.getSelectedSensorPosition() > 0) {
-      if (steer.getRawButton(2)) {
-        climbers.set((-steer.getRawAxis(2) + 1) / 2);
+
+      if (angleScrew.getSelectedSensorPosition() > 361489) {
+        if (xbox.getRightY() < 0) {
+          angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1));
+        } else {
+          angleScrew.set(0);
+        }
+      } else if (angleScrew.getSelectedSensorPosition() < -651244) {
+        if (xbox.getRightY() > 0) {
+          angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1));
+        } else {
+          angleScrew.set(0);
+        }
       } else {
-        climbers.set(0);
+        angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1));
+      }
+
+      if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
+        if (steer.getRawButton(3)) {
+          climbers.set((-steer.getRawAxis(2) + 1) / -2);
+        } else {
+          climbers.set(0);
+        }
+      } else if (leftClimber.getSelectedSensorPosition() > 0) {
+        if (steer.getRawButton(2)) {
+          climbers.set((-steer.getRawAxis(2) + 1) / 2);
+        } else {
+          climbers.set(0);
+        }
+      } else {
+        if (steer.getRawButton(2)) {
+          climbers.set((-steer.getRawAxis(2) + 1) / 2);
+        } else if (steer.getRawButton(3)) {
+          climbers.set((-steer.getRawAxis(2) + 1) / -2);
+        } else {
+          climbers.set(0);
+        }
       }
     } else {
+      leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.5);
+      rightInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.6);
+
+      angleScrew.set(Deadband.deadband(xbox.getRightY(), 0.1));
+
       if (steer.getRawButton(2)) {
         climbers.set((-steer.getRawAxis(2) + 1) / 2);
       } else if (steer.getRawButton(3)) {
@@ -201,7 +225,6 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    fieldtoggle.setValue(false);
   }
 
   /** This function is called periodically when disabled. */
