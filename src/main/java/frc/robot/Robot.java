@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
       leftClimber.setSelectedSensorPosition(0);
       rightClimber.setSelectedSensorPosition(0);
       leftInnerClimber.setSelectedSensorPosition(0);
-      rightClimber.setSelectedSensorPosition(0)
+      rightClimber.setSelectedSensorPosition(0);
       angleScrew.setSelectedSensorPosition(0);
     }
     
