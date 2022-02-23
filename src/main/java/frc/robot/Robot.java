@@ -175,13 +175,18 @@ public class Robot extends TimedRobot {
       }
 
       if (angleScrew.getSelectedSensorPosition() > 361489) {
-        if (xbox.getRightY() < 0) {
+        if (xbox.getPOV() == 18 0) {
             angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
         } else {
           angleScrew.set(0);
         }
       } else if (angleScrew.getSelectedSensorPosition() < -651244) {
-          angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
+          if (xbox.getPOV() == 0) {
+            angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
+          }
+          else {
+            angleScrew.set(0);
+          }
       } else {
         if (xbox.getPOV() == 0) {
           angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
