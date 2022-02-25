@@ -175,7 +175,7 @@ public class Robot extends TimedRobot {
       }
 
       if (angleScrew.getSelectedSensorPosition() > 361489) {
-        if (xbox.getPOV() == 18 0) {
+        if (xbox.getPOV() == 180) {
             angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
         } else {
           angleScrew.set(0);
