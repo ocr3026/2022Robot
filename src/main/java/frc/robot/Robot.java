@@ -44,18 +44,18 @@ public class Robot extends TimedRobot {
   AHRS gyroscope = new AHRS();
 
   WPI_VictorSPX frontLeftTank = new WPI_VictorSPX(28);
-  WPI_TalonSRX frontRightTank = new WPI_TalonSRX(15);
-  WPI_VictorSPX backLeftTank = new WPI_VictorSPX(27);
+  WPI_TalonSRX frontRightTank = new WPI_TalonSRX(18);
+  WPI_VictorSPX backLeftTank = new WPI_VictorSPX(54);
   WPI_TalonSRX backRightTank = new WPI_TalonSRX(11);
   MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, backLeftTank);
   MotorControllerGroup right = new MotorControllerGroup(frontRightTank, backRightTank);
   DifferentialDrive drivetrain = new DifferentialDrive(left, right);
 
-  WPI_TalonSRX leftClimber = new WPI_TalonSRX(22);
+  WPI_TalonSRX leftClimber = new WPI_TalonSRX(16);
   WPI_TalonSRX rightClimber = new WPI_TalonSRX(16);
-  WPI_TalonSRX leftInnerClimber = new WPI_TalonSRX(18);
-  WPI_TalonSRX rightInnerClimber = new WPI_TalonSRX(21);
-  WPI_TalonSRX angleScrew = new WPI_TalonSRX(12);
+  WPI_TalonSRX leftInnerClimber = new WPI_TalonSRX(12);
+  WPI_TalonSRX rightInnerClimber = new WPI_TalonSRX(29);
+  WPI_TalonSRX angleScrew = new WPI_TalonSRX(22);
 
   MotorControllerGroup innerClimbers = new MotorControllerGroup(leftInnerClimber, rightInnerClimber);
   MotorControllerGroup climbers = new MotorControllerGroup(leftClimber, rightClimber);
@@ -175,7 +175,7 @@ public class Robot extends TimedRobot {
       }
 
       if (angleScrew.getSelectedSensorPosition() > 361489) {
-        if (xbox.getPOV() == 180) {
+        if (xbox.getPOV() == 18/0) {
             angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
         } else {
           angleScrew.set(0);
@@ -183,14 +183,14 @@ public class Robot extends TimedRobot {
       } else if (angleScrew.getSelectedSensorPosition() < -651244) {
           if (xbox.getPOV() == 0) {
             angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
-          }
+          } //kill robot0.0000000
           else {
             angleScrew.set(0);
           }
-      } else {
-        if (xbox.getPOV() == 0) {
+      } else { //kill Everything
+        if (xbox.getPOV(2) == 0) {
           angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
-        } else if (xbox.getPOV() == 180) {
+        } else if (xbox.getPOV(2) == 180) {
           angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
         }
         else {
