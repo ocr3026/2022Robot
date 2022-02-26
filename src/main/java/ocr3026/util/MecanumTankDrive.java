@@ -1,13 +1,13 @@
 package ocr3026.util;
 
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class MecanumTankDrive {
   private final MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
-  private final Solenoid leftSolenoid, rightSolenoid;
+  private final DoubleSolenoid solenoid;
   private double deadband = 0;
 
   public double deadband(double value) {
@@ -20,20 +20,18 @@ public class MecanumTankDrive {
     }
   }
 
-  public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, Solenoid leftSolenoid, MotorController frontRight, MotorController rearRight, MotorController tankRight, Solenoid rightSolenoid) {
+  public MecanumTankDrive(MotorController frontLeft, MotorController rearLeft, MotorController tankLeft, MotorController frontRight, MotorController rearRight, MotorController tankRight, DoubleSolenoid solenoid) {
     this.frontLeft = frontLeft;
     this.rearLeft = rearLeft;
     this.tankLeft = tankLeft;
-    this.leftSolenoid = leftSolenoid;
     this.frontRight = frontRight;
     this.rearRight = rearRight;
     this.tankRight = tankRight;
-    this.rightSolenoid = rightSolenoid;
+    this.solenoid = solenoid;
   }
   
   public void MecanumRobotCentric(double forwardSpeed, double rightSpeed, double rotationSpeed) {
-    leftSolenoid.set(false);
-    rightSolenoid.set(false);
+    solenoid.set(DoubleSolenoid.Value.kReverse);
 
     forwardSpeed = deadband(forwardSpeed);
     rightSpeed = deadband(rightSpeed);
@@ -46,14 +44,15 @@ public class MecanumTankDrive {
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(forwardSpeed, rightSpeed, rotationSpeed, 0);
     
     frontLeft.set(speeds.frontLeft);
+    tankLeft.set(speeds.rearLeft);
     rearLeft.set(speeds.rearLeft);
     frontRight.set(speeds.frontRight);
+    tankRight.set(speeds.rearRight);
     rearRight.set(speeds.rearRight);
   }
 
   public void MecanumFieldCentric(double forwardSpeed, double rightSpeed, double rotationSpeed, double gyroAngle) {
-    leftSolenoid.set(false);
-    rightSolenoid.set(false);
+    solenoid.set(DoubleSolenoid.Value.kReverse);
 
     forwardSpeed = deadband(forwardSpeed);
     rightSpeed = deadband(rightSpeed);
@@ -66,14 +65,15 @@ public class MecanumTankDrive {
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(forwardSpeed, rightSpeed, rotationSpeed, gyroAngle);
     
     frontLeft.set(speeds.frontLeft);
+    tankLeft.set(speeds.rearLeft);
     rearLeft.set(speeds.rearLeft);
     frontRight.set(speeds.frontRight);
+    tankRight.set(speeds.rearRight);
     rearRight.set(speeds.rearRight);
   }
 
   public void TankDrive(double forwardSpeed, double rotationSpeed) {
-    leftSolenoid.set(true);
-    rightSolenoid.set(true);
+    solenoid.set(DoubleSolenoid.Value.kForward);
 
     forwardSpeed = deadband(forwardSpeed);
     rotationSpeed = deadband(rotationSpeed);

@@ -58,12 +58,12 @@ public class Robot extends TimedRobot {
 
   public static AHRS gyroscope = new AHRS();
 
-  public static CANSparkMax frontLeftMecanum = new CANSparkMax(29, MotorType.kBrushless);
-  public static CANSparkMax frontRightMecanum = new CANSparkMax(6, MotorType.kBrushless);
-  public static CANSparkMax backLeftMecanum = new CANSparkMax(22, MotorType.kBrushless);
-  public static CANSparkMax backRightMecanum = new CANSparkMax(18, MotorType.kBrushless);
-  public static CANSparkMax leftTank = new CANSparkMax(50, MotorType.kBrushless);
-  public static CANSparkMax rightTank = new CANSparkMax(51, MotorType.kBrushless);
+  public static CANSparkMax frontLeftMecanum = new CANSparkMax(7, MotorType.kBrushless);
+  public static CANSparkMax frontRightMecanum = new CANSparkMax(3, MotorType.kBrushless);
+  public static CANSparkMax backLeftMecanum = new CANSparkMax(6, MotorType.kBrushless);
+  public static CANSparkMax backRightMecanum = new CANSparkMax(4, MotorType.kBrushless);
+  public static CANSparkMax leftTank = new CANSparkMax(5, MotorType.kBrushless);
+  public static CANSparkMax rightTank = new CANSparkMax(2, MotorType.kBrushless);
 
   public static RelativeEncoder encoder = frontLeftMecanum.getEncoder();
 
@@ -77,23 +77,23 @@ public class Robot extends TimedRobot {
 
   public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  public static WPI_VictorSPX intake = new WPI_VictorSPX(24);
-  public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 6, 7);
+  public static WPI_VictorSPX intake = new WPI_VictorSPX(25);
+  public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 0);
+  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 4, 5);
   Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
   DigitalInput ballLoaded = new DigitalInput(1);
   DigitalInput ballIntake = new DigitalInput(2);
 
-  WPI_TalonSRX leftClimber = new WPI_TalonSRX(100);
-  WPI_TalonSRX rightClimber = new WPI_TalonSRX(101);
+  WPI_TalonSRX leftClimber = new WPI_TalonSRX(15);
+  WPI_TalonSRX rightClimber = new WPI_TalonSRX(14);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
 
-  WPI_TalonSRX innerLeftClimber = new WPI_TalonSRX(102);
-  WPI_TalonSRX innerRightClimber = new WPI_TalonSRX(103);
+  WPI_TalonSRX innerLeftClimber = new WPI_TalonSRX(11);
+  WPI_TalonSRX innerRightClimber = new WPI_TalonSRX(13);
   MotorControllerGroup innerClimber = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
-  WPI_TalonSRX angleScrew = new WPI_TalonSRX(104);
+  WPI_TalonSRX angleScrew = new WPI_TalonSRX(24);
 
   public static Vision vision = new Vision(drivetrain);
 
