@@ -46,13 +46,13 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX frontLeftTank = new WPI_VictorSPX(28);
   WPI_TalonSRX frontRightTank = new WPI_TalonSRX(18);
   WPI_VictorSPX backLeftTank = new WPI_VictorSPX(54);
-  WPI_TalonSRX backRightTank = new WPI_TalonSRX(11);
+  WPI_TalonSRX backRightTank = new WPI_TalonSRX(19);
   MotorControllerGroup left = new MotorControllerGroup(frontLeftTank, backLeftTank);
   MotorControllerGroup right = new MotorControllerGroup(frontRightTank, backRightTank);
   DifferentialDrive drivetrain = new DifferentialDrive(left, right);
 
   WPI_TalonSRX leftClimber = new WPI_TalonSRX(16);
-  WPI_TalonSRX rightClimber = new WPI_TalonSRX(16);
+  WPI_TalonSRX rightClimber = new WPI_TalonSRX(21);
   WPI_TalonSRX leftInnerClimber = new WPI_TalonSRX(12);
   WPI_TalonSRX rightInnerClimber = new WPI_TalonSRX(29);
   WPI_TalonSRX angleScrew = new WPI_TalonSRX(22);
@@ -176,21 +176,21 @@ public class Robot extends TimedRobot {
 
       if (angleScrew.getSelectedSensorPosition() > 361489) {
         if (xbox.getPOV() == 180) {
-          angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
+          angleScrew.set(-1);
         } else {
           angleScrew.set(0);
         }
       } else if (angleScrew.getSelectedSensorPosition() < -651244) {
           if (xbox.getPOV() == 0) {
-            angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
+            angleScrew.set(1);
           } //kill robot0.0000000
           else {
             angleScrew.set(0);
           }
       } else { //kill Everything
-        if (xbox.getPOV(2) == 0) {
+        if (xbox.getPOV() == 0) {
           angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
-        } else if (xbox.getPOV(2) == 180) {
+        } else if (xbox.getPOV() == 180) {
           angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
         }
         else {
@@ -198,13 +198,13 @@ public class Robot extends TimedRobot {
         }
       }
 
-      if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
+      if (leftClimber.getSelectedSensorPosition() > 30000 * 12) {
         if (steer.getRawButton(3)) {
           climbers.set((-steer.getRawAxis(2) + 1) / -2);
         } else {
           climbers.set(0);
         }
-      } else if (leftClimber.getSelectedSensorPosition() > 0) {
+      } else if (leftClimber.getSelectedSensorPosition() < 0) {
         if (steer.getRawButton(2)) {
           climbers.set((-steer.getRawAxis(2) + 1) / 2);
         } else {
@@ -220,12 +220,12 @@ public class Robot extends TimedRobot {
         }
       }
     } else {
-      leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.5);
+      leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.6);
       rightInnerClimber.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.6);
 
-      if (xbox.getPOV(2) == 0) {
+      if (xbox.getPOV() == 0) {
         angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
-      } else if (xbox.getPOV(2) == 180) {
+      } else if (xbox.getPOV() == 180) {
         angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
       }
       else {
