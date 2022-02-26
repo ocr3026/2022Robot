@@ -175,8 +175,8 @@ public class Robot extends TimedRobot {
       }
 
       if (angleScrew.getSelectedSensorPosition() > 361489) {
-        if (xbox.getPOV() == 18/0) {
-            angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
+        if (xbox.getPOV() == 180) {
+          angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
         } else {
           angleScrew.set(0);
         }
@@ -223,9 +223,9 @@ public class Robot extends TimedRobot {
       leftInnerClimber.set(Deadband.deadband(xbox.getLeftY(), 0.1) * 0.5);
       rightInnerClimber.set(Deadband.deadband(xbox.getRightY(), 0.1) * 0.6);
 
-      if (xbox.getPOV() == 0) {
+      if (xbox.getPOV(2) == 0) {
         angleScrew.set((-joystick.getRawAxis(3) + 1) / 2);
-      } else if (xbox.getPOV() == 180) {
+      } else if (xbox.getPOV(2) == 180) {
         angleScrew.set((-joystick.getRawAxis(3) + 1) / -2);
       }
       else {
