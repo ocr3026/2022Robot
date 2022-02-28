@@ -4,14 +4,12 @@
 
 package frc.robot;
 
-import ocr3026.Deadband;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
@@ -69,17 +67,16 @@ public class Robot extends TimedRobot {
 
   public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
 
-  static Solenoid leftTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 0);
-  static Solenoid rightTankSolenoid = new Solenoid(1, PneumaticsModuleType.CTREPCM, 1);
+  static DoubleSolenoid tankSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 2);
 
   public static MecanumTankDrive drivetrain = new MecanumTankDrive(frontLeftMecanum, backLeftMecanum, leftTank,
-      leftTankSolenoid, frontRightMecanum, backRightMecanum, rightTank, rightTankSolenoid);
+      frontRightMecanum, backRightMecanum, rightTank, tankSolenoid);
 
   public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
   public static WPI_VictorSPX intake = new WPI_VictorSPX(25);
-  public static DoubleSolenoid kickup = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 0);
-  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(0, PneumaticsModuleType.CTREPCM, 4, 5);
+  public static DoubleSolenoid kickup = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 1, 0);
+  public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 5, 4);
   Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
 
   DigitalInput ballLoaded = new DigitalInput(1);
@@ -107,17 +104,24 @@ public class Robot extends TimedRobot {
     drivetrain.setDeadband(0.15d);
     encoder.setPositionConversionFactor(0.9412340788152899);
 
-    frontRightMecanum.setInverted(true);
+    frontRightMecanum.setInverted(false);
+    frontLeftMecanum.setInverted(true);
     backRightMecanum.setInverted(true);
+    backLeftMecanum.setInverted(false);
+    leftTank.setInverted(false);
+    rightTank.setInverted(true);
+
     frontLeftMecanum.setIdleMode(IdleMode.kBrake);
     backLeftMecanum.setIdleMode(IdleMode.kBrake);
     frontRightMecanum.setIdleMode(IdleMode.kBrake);
     backRightMecanum.setIdleMode(IdleMode.kBrake);
+    leftTank.setIdleMode(IdleMode.kBrake);
+    rightTank.setIdleMode(IdleMode.kBrake);
 
     intake.setNeutralMode(NeutralMode.Brake);
     flywheel.setIdleMode(IdleMode.kBrake);
 
-    kickup.set(Value.kReverse);
+    kickup.set(Value.kForward);
     intakeSolenoid.set(Value.kForward);
 
     CameraServer.startAutomaticCapture();
@@ -136,6 +140,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println(backLeftMecanum.get());
+    System.out.println(leftTank.get());
   }
 
   /**
@@ -188,8 +194,8 @@ public class Robot extends TimedRobot {
   }
 
   /** This function is called periodically during operator control. */
-	@Override
-	public void teleopPeriodic() {
+  @Override
+  public void teleopPeriodic() {
     if (joystick.getRawButtonPressed(13)) {
       leftClimber.setSelectedSensorPosition(0);
       rightClimber.setSelectedSensorPosition(0);
@@ -199,52 +205,51 @@ public class Robot extends TimedRobot {
 
     }
     compressor.enableDigital();
-		if (joystick.getRawButtonPressed(12)) {
-			gyroscope.zeroYaw();
-		}
+    if (joystick.getRawButtonPressed(12)) {
+      gyroscope.zeroYaw();
+    }
 
-		if (joystick.getRawButtonPressed(2)) {
-			fieldtoggle.swap();
-		}
+    if (joystick.getRawButtonPressed(2)) {
+      fieldtoggle.swap();
+    }
 
-		if (xbox.getLeftTriggerAxis() > 0.9) {
-			vision.setVisionMode();
-			vision.centerTarget(joystick.getY());
-		} else {
-			vision.setDriverMode();
-			if (joystick.getRawButton(1)) {
-				drivetrain.TankDrive(joystick.getY(), steer.getX());
-			} else if (fieldtoggle.isOn()) {
-				drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
-			} else {
-				drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
-			}
-		}
+    if (xbox.getLeftTriggerAxis() > 0.9) {
+      vision.setVisionMode();
+      vision.centerTarget(joystick.getY());
+    } else {
+      vision.setDriverMode();
+      if (joystick.getRawButton(1)) {
+        drivetrain.TankDrive(joystick.getY(), steer.getX());
+      } else if (fieldtoggle.isOn()) {
+        drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
+      } else {
+        drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
+      }
+    }
 
-		if (xbox.getRightTriggerAxis() > 0.9) {
-			flywheel.set(-1);
-		} else {
-			flywheel.set(0);
-		}
+    if (xbox.getRightTriggerAxis() > 0.9) {
+      flywheel.set(1);
+    } else {
+      flywheel.set(0);
+    }
 
-    if (xbox.getXButtonPressed()) {
+    if (xbox.getXButton()) {
+      kickup.set(Value.kReverse);
+    } else {
       kickup.set(Value.kForward);
     }
-    else {
-      kickup.set(Value.kReverse);
-    }
 
-		if (joystick.getRawButtonPressed(5)) {
-			intakeSolenoid.toggle();
-		}
-    if (joystick.getRawButton(3) ) {
+    if (joystick.getRawButtonPressed(5)) {
+      intakeSolenoid.toggle();
+    }
+    if (joystick.getRawButton(4)) {
       intake.set(0.75);
-    } else if(joystick.getRawButton(4)) {
+    } else if (joystick.getRawButton(3)) {
       intake.set(-0.75);
     } else {
       intake.set(0);
     }
-    
+
     if (innerLeftClimber.getSelectedSensorPosition() > 4096 * 220) {
       if (xbox.getLeftY() < 0) {
         innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
@@ -298,7 +303,7 @@ public class Robot extends TimedRobot {
         climber.set(0);
       }
     }
-	}
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
