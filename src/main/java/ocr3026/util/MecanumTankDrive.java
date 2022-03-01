@@ -1,14 +1,22 @@
 package ocr3026.util;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import com.kauailabs.navx.frc.AHRS;
+import frc.robot.Robot;
+import java.lang.Math;
 
 public class MecanumTankDrive {
+  private static final Joystick joystick = Robot.joystick;
   private final MotorController frontLeft, rearLeft, tankLeft, frontRight, rearRight, tankRight;
   private final DoubleSolenoid solenoid;
   private double deadband = 0;
+  public static final AHRS gyroscope = Robot.gyroscope;
+  private double theta = (java.lang.Math.atan(joystick.getY()/joystick.getX()))  * (180 / java.lang.Math.PI);
+  private double error =  theta -gyroscope.getYaw();
 
   public double deadband(double value) {
     if(value > deadband) {
@@ -39,11 +47,12 @@ public class MecanumTankDrive {
 
     forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
     rightSpeed = rightSpeed * Math.abs(rightSpeed);
-    rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
+    rotationSpeed = (rotationSpeed * Math.abs(rotationSpeed)) + error;
 
     MecanumDrive.WheelSpeeds speeds = MecanumDrive.driveCartesianIK(forwardSpeed, rightSpeed, rotationSpeed, 0);
     
-    frontLeft.set(speeds.frontLeft);
+    frontLeft.set(
+      speeds.frontLeft);
     tankLeft.set(speeds.rearLeft);
     rearLeft.set(speeds.rearLeft);
     frontRight.set(speeds.frontRight);

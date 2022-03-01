@@ -50,7 +50,7 @@ public class Robot extends TimedRobot {
 
   private Toggle fieldtoggle = new Toggle();
 
-  Joystick joystick = new Joystick(0);
+  public static Joystick joystick = new Joystick(0);
   Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
 
@@ -107,8 +107,8 @@ public class Robot extends TimedRobot {
     frontRightMecanum.setInverted(false);
     frontLeftMecanum.setInverted(true);
     backRightMecanum.setInverted(true);
-    backLeftMecanum.setInverted(false);
-    leftTank.setInverted(false);
+    backLeftMecanum.setInverted(true);
+    leftTank.setInverted(true);
     rightTank.setInverted(true);
 
     frontLeftMecanum.setIdleMode(IdleMode.kBrake);
@@ -219,11 +219,11 @@ public class Robot extends TimedRobot {
     } else {
       vision.setDriverMode();
       if (joystick.getRawButton(1)) {
-        drivetrain.TankDrive(joystick.getY(), steer.getX());
+        drivetrain.TankDrive(joystick.getY(), -steer.getX());
       } else if (fieldtoggle.isOn()) {
-        drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), steer.getX(), gyroscope.getYaw());
+        drivetrain.MecanumFieldCentric(joystick.getY(), joystick.getX(), -steer.getX(), gyroscope.getYaw());
       } else {
-        drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), steer.getX());
+        drivetrain.MecanumRobotCentric(joystick.getY(), joystick.getX(), -steer.getX());
       }
     }
 
@@ -243,9 +243,9 @@ public class Robot extends TimedRobot {
       intakeSolenoid.toggle();
     }
     if (joystick.getRawButton(4)) {
-      intake.set(0.75);
-    } else if (joystick.getRawButton(3)) {
       intake.set(-0.75);
+    } else if (joystick.getRawButton(3)) {
+      intake.set(0.75);
     } else {
       intake.set(0);
     }
