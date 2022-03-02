@@ -15,7 +15,7 @@ public class MecanumTankDrive {
   private final DoubleSolenoid solenoid;
   private double deadband = 0;
   public static final AHRS gyroscope = Robot.gyroscope;
-  private double theta = (java.lang.Math.atan(joystick.getY()/joystick.getX()))  * (180 / java.lang.Math.PI);
+  private double theta = (java.lang.Math.atan(joystick.getY()/joystick.getX()))  * (180 / java.lang.Math.PI);  
   private double error =  theta -gyroscope.getYaw();
 
   public double deadband(double value) {
