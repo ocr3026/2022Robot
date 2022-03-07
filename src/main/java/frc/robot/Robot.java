@@ -20,6 +20,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -42,15 +43,15 @@ public class Robot extends TimedRobot {
   private static final String middleAuto = "middle";
   private static final String leftAuto = "left";
   private static final String rightAuto = "right";
-  private String m_autoSelected = "idk";
+  private String m_autoSelected;
 
   double gearRatio = 133 / 1125;
   private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
 
-  public Joystick joystick = new Joystick(0);
-  public static Joystick steer = new Joystick(1);
+  public static Joystick joystick = new Joystick(0);
+  Joystick steer = new Joystick(1);
   XboxController xbox = new XboxController(2);
 
   public static AHRS gyroscope = new AHRS();
@@ -103,12 +104,12 @@ public class Robot extends TimedRobot {
     drivetrain.setDeadband(0.15d);
     encoder.setPositionConversionFactor(0.9412340788152899);
 
-    frontRightMecanum.setInverted(!false);
-    frontLeftMecanum.setInverted(!true);
-    backRightMecanum.setInverted(!true);
-    backLeftMecanum.setInverted(!true);
-    leftTank.setInverted(!true);
-    rightTank.setInverted(!true);
+    frontRightMecanum.setInverted(false);
+    frontLeftMecanum.setInverted(true);
+    backRightMecanum.setInverted(true);
+    backLeftMecanum.setInverted(true);
+    leftTank.setInverted(true);
+    rightTank.setInverted(true);
 
     frontLeftMecanum.setIdleMode(IdleMode.kBrake);
     backLeftMecanum.setIdleMode(IdleMode.kBrake);
@@ -139,6 +140,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println(backLeftMecanum.get());
+    System.out.println(leftTank.get());
   }
 
   /**
@@ -218,9 +221,9 @@ public class Robot extends TimedRobot {
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), -steer.getX());
       } else if (fieldtoggle.isOn()) {
-        drivetrain.MecanumFieldCentric(-joystick.getY(), joystick.getX(), steer.getX(), gyroscope.getYaw());
+        drivetrain.MecanumFieldCentric(joystick.getY(), joystick.getX(), -steer.getX(), gyroscope.getYaw());
       } else {
-        drivetrain.MecanumRobotCentric(-joystick.getY(), -joystick.getX(), steer.getX());
+        drivetrain.MecanumRobotCentric(joystick.getY(), joystick.getX(), -steer.getX());
       }
     }
 
@@ -307,13 +310,6 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     fieldtoggle.setToggle(false);
     compressor.disable();
-
-    System.out.println(frontLeftMecanum.getEncoder().getPosition());
-    System.out.println(backLeftMecanum.getEncoder().getPosition());
-    System.out.println(frontRightMecanum.getEncoder().getPosition());
-    System.out.println(backRightMecanum.getEncoder().getPosition());
-    System.out.println(leftTank.getEncoder().getPosition());
-    System.out.println(rightTank.getEncoder().getPosition());
   }
 
   /** This function is called periodically when disabled. */
