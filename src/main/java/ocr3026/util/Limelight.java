@@ -46,8 +46,8 @@ public class Limelight {
         return limelight.getEntry("tl").getDouble(0);
     }
 
-    public short getPipeline() {
-        return limelight.getEntry("getpipe").getNumber(0).shortValue();
+    public int getPipeline() {
+        return limelight.getEntry("getpipe").getNumber(0).intValue();
     }
 
     public void setLedMode(ledMode mode) {
@@ -58,7 +58,7 @@ public class Limelight {
         limelight.getEntry("camMode").setNumber(mode.ordinal());
     }
 
-    public void setPipeline(short pipeline) {
+    public void setPipeline(int pipeline) {
         limelight.getEntry("pipeline").setNumber(pipeline);
     }
 }

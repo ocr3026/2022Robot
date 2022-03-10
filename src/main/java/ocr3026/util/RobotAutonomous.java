@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.Timer;
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.PIDController;
 import frc.robot.Robot;
 

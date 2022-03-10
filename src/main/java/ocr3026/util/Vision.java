@@ -5,8 +5,8 @@ import edu.wpi.first.math.controller.PIDController;
 public class Vision {
 	private Limelight limelight = new Limelight();
 	private MecanumTankDrive drive;
-	private PIDController rotationPID = new PIDController(1, 0.5, 0.5);
-	private PIDController distancePID = new PIDController(1, 0.5, 0.5);
+	private PIDController rotationPID = new PIDController(0.1, 0, 0);
+	private PIDController distancePID = new PIDController(0.1, 0, 0);
 
 	private boolean visionOn = true;
 	private double sweetSpot = 0.3;
@@ -15,17 +15,18 @@ public class Vision {
 		limelight.setCamMode(Limelight.camMode.VISION);
 		limelight.setLedMode(Limelight.ledMode.PIPELINE);
 		drive = drivetrain;
+		limelight.setPipeline(0);
 	}
 
 	public void setDriverMode() {
-		limelight.setCamMode(Limelight.camMode.DRIVER);
-		limelight.setLedMode(Limelight.ledMode.OFF);
+		limelight.setCamMode(Limelight.camMode.VISION);
+		limelight.setLedMode(Limelight.ledMode.PIPELINE);
 		visionOn = false;
 	}
 
 	public void setVisionMode() {
 		limelight.setCamMode(Limelight.camMode.VISION);
-		limelight.setLedMode(Limelight.ledMode.ON);
+		limelight.setLedMode(Limelight.ledMode.PIPELINE);
 		visionOn = true;
 	}
 
@@ -45,18 +46,18 @@ public class Vision {
 	}
 
 	public boolean centerTarget(double forward) {
-		if (limelight.getTargetX() < 0.1 || limelight.getTargetX() > 0.1) {
-			drive.MecanumRobotCentric(0, 0, rotationPID.calculate(limelight.getTargetX(), 0));
+		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
+			drive.MecanumRobotCentric(0, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
-			drive.MecanumRobotCentric(forward, 0, 0);
+			drive.MecanumRobotCentric(forward, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX() - 1, 0), -0.25, 0.25), false);
 			return true;
 		}
 	}
 
 	public boolean centerTarget() {
-		if (limelight.getTargetX() < 0.1 || limelight.getTargetX() > 0.1) {
-			drive.MecanumRobotCentric(0, 0, rotationPID.calculate(limelight.getTargetX(), 0));
+		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
+			drive.MecanumRobotCentric(0, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
 			drive.MecanumRobotCentric(0, 0, 0);

@@ -140,8 +140,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    System.out.println(backLeftMecanum.get());
-    System.out.println(leftTank.get());
   }
 
   /**
@@ -221,9 +219,9 @@ public class Robot extends TimedRobot {
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), -steer.getX());
       } else if (fieldtoggle.isOn()) {
-        drivetrain.MecanumFieldCentric(joystick.getY(), joystick.getX(), -steer.getX(), gyroscope.getYaw());
+        drivetrain.MecanumFieldCentric(joystick.getY(), -joystick.getX(), -steer.getX(), gyroscope.getYaw());
       } else {
-        drivetrain.MecanumRobotCentric(joystick.getY(), joystick.getX(), -steer.getX());
+        drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), -steer.getX());
       }
     }
 
