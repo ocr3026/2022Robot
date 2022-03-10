@@ -5,8 +5,8 @@ import edu.wpi.first.math.controller.PIDController;
 public class Vision {
 	private Limelight limelight = new Limelight();
 	private MecanumTankDrive drive;
-	private PIDController rotationPID = new PIDController(0.1, 0, 0);
-	private PIDController distancePID = new PIDController(0.1, 0, 0);
+	private PIDController rotationPID = new PIDController(0.15, 0.05, 0.05);
+	private PIDController distancePID = new PIDController(0.15, 0.05, 0.05);
 
 	private boolean visionOn = true;
 	private double sweetSpot = 0.3;
@@ -46,17 +46,18 @@ public class Vision {
 	}
 
 	public boolean centerTarget(double forward) {
-		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
+		if (limelight.getTargetX() < -0.5 || limelight.getTargetX() > 0.5) {
+			System.out.println(Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25));
 			drive.MecanumRobotCentric(0, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
-			drive.MecanumRobotCentric(forward, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX() - 1, 0), -0.25, 0.25), false);
+			drive.MecanumRobotCentric(forward, 0, 0, false);
 			return true;
 		}
 	}
 
 	public boolean centerTarget() {
-		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
+		if (limelight.getTargetX() < -0.5 || limelight.getTargetX() > 0.5) {
 			drive.MecanumRobotCentric(0, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
