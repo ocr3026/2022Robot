@@ -45,8 +45,7 @@ public class Robot extends TimedRobot {
   private static final String leftAuto = "left";
   private static final String rightAuto = "right";
   private String m_autoSelected;
-
-  private double gearRatio = 133 / 1125;
+  
   private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
