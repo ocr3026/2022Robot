@@ -46,7 +46,6 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
-  private double gearRatio = 133 / 1125;
   private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
@@ -120,6 +119,10 @@ public class Robot extends TimedRobot {
     backRightMecanum.setIdleMode(IdleMode.kBrake);
     leftTank.setIdleMode(IdleMode.kBrake);
     rightTank.setIdleMode(IdleMode.kBrake);
+
+    innerLeftClimber.setIdleMode(IdleMode.kBrake);
+    innerRightClimber.setIdleMode(IdleMode.kBrake);
+    angleScrew.setIdleMode(IdleMode.kBrake);
 
     intake.setNeutralMode(NeutralMode.Brake);
     flywheel.setIdleMode(IdleMode.kBrake);
@@ -240,6 +243,7 @@ public class Robot extends TimedRobot {
     if (joystick.getRawButtonPressed(5)) {
       intakeSolenoid.toggle();
     }
+
     if (joystick.getRawButton(4)) {
       intake.set(-0.75);
     } else if (joystick.getRawButton(3)) {
@@ -248,6 +252,41 @@ public class Robot extends TimedRobot {
       intake.set(0);
     }
 
+    if(joystick.getRawButtonPressed(2) || joystick.getRawButtonPressed(3) || joystick.getRawButtonPressed(4) || joystick.getRawButtonPressed(5)) {
+      if (steer.getRawButton(3)) {
+        innerClimbers.set(1);
+      } else if (steer.getRawButton(2)) {
+        innerClimbers.set(-1);
+      } else {
+        innerClimbers.set(0);
+      }
+
+      if (steer.getRawButton(5)) {
+        angleScrew.set(1);
+      } else if (steer.getRawButton(4)) {
+        angleScrew.set(-1);
+      } else {
+        angleScrew.set(0);
+      }
+    } else {
+      if (xbox.getRawButton(9)) {
+        innerClimbers.set(1);
+      } else if (xbox.getRawButton(7)) {
+        innerClimbers.set(-1);
+      } else {
+        innerClimbers.set(0);
+      }
+
+      if (xbox.getRawButton(10)) {
+        angleScrew.set(1);
+      } else if (xbox.getRawButton(8)) {
+        angleScrew.set(-1);
+      } else {
+        angleScrew.set(0);
+      }
+    }
+
+    /*
     if (innerLeftClimber.getEncoder().getPosition() > 42 * 220) {
       if (xbox.getLeftY() < 0) {
         innerClimbers.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
@@ -279,7 +318,6 @@ public class Robot extends TimedRobot {
     } else {
       angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
     }
-    /*
 
     if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
       if (steer.getRawButton(3)) {
