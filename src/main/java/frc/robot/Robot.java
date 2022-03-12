@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Compressor;
@@ -126,6 +127,8 @@ public class Robot extends TimedRobot {
     intakeSolenoid.set(Value.kForward);
 
     CameraServer.startAutomaticCapture();
+    String[] autos = {"Right", "Left", "Middle"};
+    SmartDashboard.putStringArray("Auto List", autos);
   }
 
   /**
@@ -163,6 +166,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    m_autoSelected = SmartDashboard.getString("Auto Selector", "Middle");
     System.out.println("Auto selected: " + m_autoSelected);
     switch (m_autoSelected) {
       case rightAuto:
@@ -226,7 +230,13 @@ public class Robot extends TimedRobot {
         drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), -steer.getX());
       }
     }
-
+    if (steer.getRawButton(11)) {
+      if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175)  {
+        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180));
+      } else {
+        drivetrain.MecanumRobotCentric(0, 0, 0);
+      }
+    }
     if (xbox.getRightTriggerAxis() > 0.9) {
       flywheel.set(1);
     } else {

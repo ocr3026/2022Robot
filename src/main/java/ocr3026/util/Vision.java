@@ -9,7 +9,7 @@ public class Vision {
 	private PIDController distancePID = new PIDController(0.15, 0, 0.75);
 
 	private boolean visionOn = true;
-	private double sweetSpot = 10;
+	private final double sweetSpot = 10;
 
 	public Vision(MecanumTankDrive drivetrain) {
 		limelight.setCamMode(Limelight.camMode.VISION);
