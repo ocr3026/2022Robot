@@ -1,24 +1,35 @@
 package ocr3026.util;
 
-import com.revrobotics.RelativeEncoder;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.controller.PIDController;
-import frc.robot.Robot;
+import java.util.function.Supplier;
 
-public interface RobotAutonomous {
-  public static final AHRS gyroscope = Robot.gyroscope;
-  public static final PIDController gyroscoperotation = Robot.gyroscoperotation;
-  public static final MecanumTankDrive drivetrain = Robot.drivetrain;
-  public static final DoubleSolenoid kickup = Robot.kickup;
-  public static final DoubleSolenoid intakeSolenoid = Robot.intakeSolenoid;
-  public static final VictorSPX intake = Robot.intake;
-  public static final Vision vision = Robot.vision;
-  public static final Timer timer = new Timer();
-  public static final RelativeEncoder encoder = Robot.encoder;
-  //TODO Add vision to this
-  public void init();
-  public void periodic();
+import edu.wpi.first.wpilibj.Timer;
+
+import java.lang.Runnable;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class RobotAutonomous {
+  protected Timer timer = new Timer();
+
+  private Queue<Pair<Runnable, Supplier<Boolean>>> stepQueue = new LinkedList<Pair<Runnable, Supplier<Boolean>>>();
+  private Pair<Runnable, Supplier<Boolean>> currentStep;
+
+  protected void addStep(Runnable onLoop, Supplier<Boolean> condition) {
+    stepQueue.add(new Pair<Runnable, Supplier<Boolean>>(onLoop, condition));
+  }
+
+  public void init() {
+    timer.start();
+    currentStep = stepQueue.remove();
+  }
+
+  public void periodic() {
+    if(currentStep.second.get()) {
+      currentStep.first.run();
+    } else {
+      currentStep = stepQueue.remove();
+      timer.reset();
+      timer.start();
+    }
+  }
 }

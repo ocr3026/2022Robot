@@ -164,28 +164,15 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     System.out.println("Auto selected: " + m_autoSelected);
-    switch (m_autoSelected) {
-      case rightAuto:
-        autonomous = new RightAutonomous();
-        break;
-      case middleAuto:
-        autonomous = new MiddleAutonomous();
-        break;
-      case leftAuto:
-        autonomous = new LeftAutonomous();
-        break;
-      default:
-        autonomous = new MiddleAutonomous();
-        break;
-    }
+    autonomous = new MiddleAuto();
     autonomous.init();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    autonomous.periodic();
     compressor.enableDigital();
+    autonomous.periodic();
   }
 
   /** This function is called once when teleop is enabled. */
