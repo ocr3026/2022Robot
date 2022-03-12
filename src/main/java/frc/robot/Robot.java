@@ -24,7 +24,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Toggle;
@@ -84,15 +83,17 @@ public class Robot extends TimedRobot {
   DigitalInput ballLoaded = new DigitalInput(1);
   DigitalInput ballIntake = new DigitalInput(2);
 
+  /*
   WPI_TalonSRX leftClimber = new WPI_TalonSRX(15);
   WPI_TalonSRX rightClimber = new WPI_TalonSRX(14);
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
+  */
 
-  WPI_TalonSRX innerLeftClimber = new WPI_TalonSRX(11);
-  WPI_TalonSRX innerRightClimber = new WPI_TalonSRX(13);
-  MotorControllerGroup innerClimber = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
+  CANSparkMax innerLeftClimber = new CANSparkMax(11, MotorType.kBrushless);
+  CANSparkMax innerRightClimber = new CANSparkMax(13, MotorType.kBrushless);
+  MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
-  WPI_TalonSRX angleScrew = new WPI_TalonSRX(24);
+  CANSparkMax angleScrew = new CANSparkMax(24, MotorType.kBrushless);
 
   public static Vision vision = new Vision(drivetrain);
 
@@ -188,11 +189,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     if (joystick.getRawButtonPressed(13)) {
-      leftClimber.setSelectedSensorPosition(0);
-      rightClimber.setSelectedSensorPosition(0);
-      innerLeftClimber.setSelectedSensorPosition(0);
-      innerRightClimber.setSelectedSensorPosition(0);
-      angleScrew.setSelectedSensorPosition(0);
+      innerLeftClimber.getEncoder().setPosition(0);
+      innerRightClimber.getEncoder().setPosition(0);
+      angleScrew.getEncoder().setPosition(0);
 
     }
     compressor.enableDigital();
@@ -247,29 +246,29 @@ public class Robot extends TimedRobot {
       intake.set(0);
     }
 
-    if (innerLeftClimber.getSelectedSensorPosition() > 4096 * 220) {
+    if (innerLeftClimber.getEncoder().getPosition() > 42 * 220) {
       if (xbox.getLeftY() < 0) {
-        innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+        innerClimbers.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
-        innerClimber.set(0);
+        innerClimbers.set(0);
       }
-    } else if (innerLeftClimber.getSelectedSensorPosition() <= 4096 * 0) {
+    } else if (innerLeftClimber.getEncoder().getPosition() <= 42 * 0) {
       if (xbox.getLeftY() > 0) {
-        innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+        innerClimbers.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
       } else {
-        innerClimber.set(0);
+        innerClimbers.set(0);
       }
     } else {
-      innerClimber.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
+      innerClimbers.set(ocr3026.Deadband.deadband(xbox.getLeftY(), 0.1) * 0.25);
     }
 
-    if (angleScrew.getSelectedSensorPosition() > 4096 * 20) {
+    if (angleScrew.getEncoder().getPosition() > 42 * 20) {
       if (xbox.getRightY() < 0) {
         angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
       } else {
         angleScrew.set(0);
       }
-    } else if (angleScrew.getSelectedSensorPosition() < 0) {
+    } else if (angleScrew.getEncoder().getPosition() < 0) {
       if (xbox.getRightY() > 0) {
         angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
       } else {
@@ -278,6 +277,7 @@ public class Robot extends TimedRobot {
     } else {
       angleScrew.set(ocr3026.Deadband.deadband(xbox.getRightY(), 0.1) * 0.25);
     }
+    /*
 
     if (leftClimber.getSelectedSensorPosition() < -30000 * 12) {
       if (steer.getRawButton(3)) {
@@ -300,6 +300,7 @@ public class Robot extends TimedRobot {
         climber.set(0);
       }
     }
+    */
   }
 
   /** This function is called once when the robot is disabled. */
