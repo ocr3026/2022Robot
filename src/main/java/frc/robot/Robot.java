@@ -120,6 +120,10 @@ public class Robot extends TimedRobot {
     leftTank.setIdleMode(IdleMode.kBrake);
     rightTank.setIdleMode(IdleMode.kBrake);
 
+    innerLeftClimber.setIdleMode(IdleMode.kBrake);
+    innerRightClimber.setIdleMode(IdleMode.kBrake);
+    angleScrew.setIdleMode(IdleMode.kBrake);
+
     intake.setNeutralMode(NeutralMode.Brake);
     flywheel.setIdleMode(IdleMode.kBrake);
 
