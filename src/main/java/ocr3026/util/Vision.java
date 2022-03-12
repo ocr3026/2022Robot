@@ -3,13 +3,13 @@ package ocr3026.util;
 import edu.wpi.first.math.controller.PIDController;
 
 public class Vision {
-	private Limelight limelight = new Limelight();
+	public Limelight limelight = new Limelight();
 	private MecanumTankDrive drive;
 	private PIDController rotationPID = new PIDController(0.15, 0, 0.75);
 	private PIDController distancePID = new PIDController(0.15, 0, 0.75);
 
 	private boolean visionOn = true;
-	private double sweetSpot = 0.3;
+	private double sweetSpot = 10;
 
 	public Vision(MecanumTankDrive drivetrain) {
 		limelight.setCamMode(Limelight.camMode.VISION);
@@ -76,7 +76,7 @@ public class Vision {
 	}
 
 	public double getBarValue() {
-		return limelight.getTargetArea();
+		return Math.Clamp(limelight.getBoundingBoxVertical() - sweetSpot, -5, 5);
 	}
 
 	public Limelight getLimelight() {

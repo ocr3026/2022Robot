@@ -27,6 +27,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import ocr3026.util.Toggle;
+import ocr3026.util.Dashboard;
 import ocr3026.util.MecanumTankDrive;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Autonomous.*;
@@ -45,7 +46,7 @@ public class Robot extends TimedRobot {
   private static final String rightAuto = "right";
   private String m_autoSelected;
 
-  double gearRatio = 133 / 1125;
+  private double gearRatio = 133 / 1125;
   private RobotAutonomous autonomous;
 
   private Toggle fieldtoggle = new Toggle();
@@ -140,6 +141,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    Dashboard.updateDriverStationValues();
   }
 
   /**

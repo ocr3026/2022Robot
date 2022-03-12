@@ -42,6 +42,10 @@ public class Limelight {
         return limelight.getEntry("ts").getDouble(0);
     }
 
+    public double getBoundingBoxVertical() {
+        return limelight.getEntry("tvert").getDouble(0);
+    }
+
     public double getLimelightLatency() {
         return limelight.getEntry("tl").getDouble(0);
     }
