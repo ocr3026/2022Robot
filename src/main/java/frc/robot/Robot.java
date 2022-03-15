@@ -26,6 +26,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import ocr3026.util.Toggle;
 import ocr3026.util.Dashboard;
+import ocr3026.util.Math;
 import ocr3026.util.MecanumTankDrive;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Autonomous.*;
@@ -91,6 +92,7 @@ public class Robot extends TimedRobot {
   MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
   CANSparkMax angleScrew = new CANSparkMax(8, MotorType.kBrushless);
+  double angleSpeed = 0;
 
   public static Vision vision = new Vision(drivetrain);
 
@@ -260,10 +262,13 @@ public class Robot extends TimedRobot {
       }
 
       if (steer.getRawButton(5)) {
-        angleScrew.set(1);
+        angleSpeed = Math.Clamp(angleSpeed + 0.01, 0, 0.5);
+        angleScrew.set(angleSpeed);
       } else if (steer.getRawButton(4)) {
-        angleScrew.set(-1);
+        angleSpeed = Math.Clamp(angleSpeed + 0.01, 0, 0.5);
+        angleScrew.set(-angleSpeed);
       } else {
+        angleSpeed = 0;
         angleScrew.set(0);
       }
     } else {
