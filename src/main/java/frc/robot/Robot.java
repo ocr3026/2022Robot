@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
   public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  public static CANSparkMax intake = new CANSparkMax(25, MotorType.kBrushless);
+  public static CANSparkMax intake = new CANSparkMax(11, MotorType.kBrushless);
   public static DoubleSolenoid kickup = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 1, 0);
   public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 5, 4);
   Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
@@ -88,11 +88,11 @@ public class Robot extends TimedRobot {
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   */
 
-  CANSparkMax innerLeftClimber = new CANSparkMax(11, MotorType.kBrushless);
-  CANSparkMax innerRightClimber = new CANSparkMax(13, MotorType.kBrushless);
+  CANSparkMax innerLeftClimber = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax innerRightClimber = new CANSparkMax(9, MotorType.kBrushless);
   MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
-  CANSparkMax angleScrew = new CANSparkMax(24, MotorType.kBrushless);
+  CANSparkMax angleScrew = new CANSparkMax(8, MotorType.kBrushless);
 
   public static Vision vision = new Vision(drivetrain);
 

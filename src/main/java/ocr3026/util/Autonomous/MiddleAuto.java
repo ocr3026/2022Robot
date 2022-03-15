@@ -110,9 +110,9 @@ public class MiddleAuto extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			if encoder.getPosition > 
+//			if encoder.getPosition > 
 		}, () -> {
-			
+			return false;
 		});
 				
 		addStep(() -> {
