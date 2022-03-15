@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
   public static CANSparkMax flywheel = new CANSparkMax(37, MotorType.kBrushless);
 
-  public static WPI_VictorSPX intake = new WPI_VictorSPX(25);
+  public static CANSparkMax intake = new CANSparkMax(25, MotorType.kBrushless);
   public static DoubleSolenoid kickup = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 1, 0);
   public static DoubleSolenoid intakeSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 5, 4);
   Compressor compressor = new Compressor(1, PneumaticsModuleType.CTREPCM);
@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
     innerRightClimber.setIdleMode(IdleMode.kBrake);
     angleScrew.setIdleMode(IdleMode.kBrake);
 
-    intake.setNeutralMode(NeutralMode.Brake);
+    intake.setIdleMode(IdleMode.kBrake);
     flywheel.setIdleMode(IdleMode.kBrake);
 
     kickup.set(Value.kForward);

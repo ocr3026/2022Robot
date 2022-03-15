@@ -21,13 +21,14 @@ public class MiddleAuto extends RobotAutonomous {
 	private final  PIDController gyroscoperotation = Robot.gyroscoperotation;
 	private final DoubleSolenoid intakeSolenoid = Robot.intakeSolenoid;
 	private final DoubleSolenoid kickup = Robot.kickup;
-	private final WPI_VictorSPX intake = Robot.intake;
+	private final CANSparkMax intake = Robot.intake;
 	private final CANSparkMax flywheel = Robot.flywheel;
 
 	private boolean isCentered = false;
 	private boolean inSweetSpot = false;
 	private boolean gyroInRange = false;
 	private boolean driveInRange  = false;
+	private boolean drivenDistance = false;
 
 	public MiddleAuto() {
 		addStep(() -> {
@@ -109,15 +110,81 @@ public class MiddleAuto extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			
+			if encoder.getPosition > 
 		}, () -> {
 			
 		});
 				
 		addStep(() -> {
+			intake.set(0);
+		}, () -> {
+			return timer.hasElapsed(.4);
+		});
+		
+		addStep(() -> {
+			intakeSolenoid.set(Value.kForward);
+		}, () -> {
+			return !timer.hasElapsed(.5);
+		});
+		
+		addStep(() -> {
+			if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175) {
+				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180), false);
+			}
+			else {
+				gyroInRange = true;
+			}
+		}, () -> {
+			return !gyroInRange;
+		});
+
+		addStep(() -> {
+			if ((vision.limelight.getTargetX() < -0.2 || vision.limelight.getTargetX() > 0.2)) {
+				vision.setVisionMode();
+				vision.centerTarget();
+			}
+			else  {
+				isCentered = true;
+			}
+	
+		}, () -> {
+			return !isCentered;
+		});
+		
+		addStep(() -> {
+			if (vision.limelight.getBoundingBoxVertical() > (vision.sweetSpot + 0.01) || vision.limelight.getBoundingBoxVertical() < (vision.sweetSpot - 0.01)) {
+				vision.goToSweetSpot();
+			}
+			else {
+				vision.setDriverMode();
+				inSweetSpot = true;
+			}
+		}, () -> {
+			return !inSweetSpot;
+		});
+
+		addStep(() -> {
+			flywheel.set(1);
+		}, () -> {
+			return !timer.hasElapsed(1);
+		});
+		
+		addStep(() -> {
 			kickup.set(Value.kForward);
 		}, () -> {
-			return timer.hasElapsed(.5);
+			return !timer.hasElapsed(.5);
+		});
+				
+		addStep(() -> {
+			kickup.set(Value.kReverse);
+		}, () -> {
+			return !timer.hasElapsed(.5);
+		});
+				
+		addStep(() -> {
+			flywheel.set(0);
+		}, () -> {
+			return !timer.hasElapsed(.5);
 		});
 	}
 }
