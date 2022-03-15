@@ -91,7 +91,7 @@ public class Robot extends TimedRobot {
   CANSparkMax innerRightClimber = new CANSparkMax(9, MotorType.kBrushless);
   MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
-  CANSparkMax angleScrew = new CANSparkMax(8, MotorType.kBrushless);
+  CANSparkMax climberAngle = new CANSparkMax(8, MotorType.kBrushless);
   double angleSpeed = 0;
 
   public static Vision vision = new Vision(drivetrain);
@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
 
     innerLeftClimber.setIdleMode(IdleMode.kBrake);
     innerRightClimber.setIdleMode(IdleMode.kBrake);
-    angleScrew.setIdleMode(IdleMode.kBrake);
+    climberAngle.setIdleMode(IdleMode.kBrake);
 
     intake.setIdleMode(IdleMode.kBrake);
     flywheel.setIdleMode(IdleMode.kBrake);
@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
     if (joystick.getRawButtonPressed(13)) {
       innerLeftClimber.getEncoder().setPosition(0);
       innerRightClimber.getEncoder().setPosition(0);
-      angleScrew.getEncoder().setPosition(0);
+      climberAngle.getEncoder().setPosition(0);
 
     }
     compressor.enableDigital();
@@ -263,13 +263,13 @@ public class Robot extends TimedRobot {
 
       if (steer.getRawButton(5)) {
         angleSpeed = Math.Clamp(angleSpeed + 0.01, 0, 0.5);
-        angleScrew.set(angleSpeed);
+        climberAngle.set(angleSpeed);
       } else if (steer.getRawButton(4)) {
         angleSpeed = Math.Clamp(angleSpeed + 0.01, 0, 0.5);
-        angleScrew.set(-angleSpeed);
+        climberAngle.set(-angleSpeed);
       } else {
         angleSpeed = 0;
-        angleScrew.set(0);
+        climberAngle.set(0);
       }
     } else {
       if (xbox.getRawButton(9)) {
@@ -281,11 +281,11 @@ public class Robot extends TimedRobot {
       }
 
       if (xbox.getRawButton(10)) {
-        angleScrew.set(1);
+        climberAngle.set(1);
       } else if (xbox.getRawButton(8)) {
-        angleScrew.set(-1);
+        climberAngle.set(-1);
       } else {
-        angleScrew.set(0);
+        climberAngle.set(0);
       }
     }
 
