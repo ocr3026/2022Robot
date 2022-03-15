@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
     backRightMecanum.setInverted(true);
     backLeftMecanum.setInverted(true);
     leftTank.setInverted(true);
-    rightTank.setInverted(true);
+    rightTank.setInverted(false);
 
     frontLeftMecanum.setIdleMode(IdleMode.kBrake);
     backLeftMecanum.setIdleMode(IdleMode.kBrake);
@@ -252,7 +252,7 @@ public class Robot extends TimedRobot {
       intake.set(0);
     }
 
-    if(joystick.getRawButtonPressed(2) || joystick.getRawButtonPressed(3) || joystick.getRawButtonPressed(4) || joystick.getRawButtonPressed(5)) {
+    if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(4) || steer.getRawButton(5)) {
       if (steer.getRawButton(3)) {
         innerClimbers.set(1);
       } else if (steer.getRawButton(2)) {
