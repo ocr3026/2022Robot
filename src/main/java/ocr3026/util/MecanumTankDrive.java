@@ -32,14 +32,14 @@ public class MecanumTankDrive {
     this.solenoid = solenoid;
   }
 
-  public void MecanumRobotCentric(double forwardSpeed, double rightSpeed, double rotationSpeed, boolean squareInputs) {
+  public void MecanumRobotCentric(double forwardSpeed, double rightSpeed, double rotationSpeed, boolean joystick) {
     solenoid.set(DoubleSolenoid.Value.kReverse);
 
-    forwardSpeed = deadband(forwardSpeed);
-    rightSpeed = deadband(rightSpeed);
-    rotationSpeed = deadband(rotationSpeed);
+    if (joystick) {
+      forwardSpeed = deadband(forwardSpeed);
+      rightSpeed = deadband(rightSpeed);
+      rotationSpeed = deadband(rotationSpeed);
 
-    if (squareInputs) {
       forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
       rightSpeed = rightSpeed * Math.abs(rightSpeed);
       rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
@@ -60,14 +60,14 @@ public class MecanumTankDrive {
   }
 
   public void MecanumFieldCentric(double forwardSpeed, double rightSpeed, double rotationSpeed, double gyroAngle,
-      boolean squareInputs) {
+      boolean joystick) {
     solenoid.set(DoubleSolenoid.Value.kReverse);
 
-    forwardSpeed = deadband(forwardSpeed);
-    rightSpeed = deadband(rightSpeed);
-    rotationSpeed = deadband(rotationSpeed);
+    if (joystick) {
+      forwardSpeed = deadband(forwardSpeed);
+      rightSpeed = deadband(rightSpeed);
+      rotationSpeed = deadband(rotationSpeed);
 
-    if (squareInputs) {
       forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
       rightSpeed = rightSpeed * Math.abs(rightSpeed);
       rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
@@ -87,13 +87,13 @@ public class MecanumTankDrive {
     MecanumFieldCentric(forwardSpeed, rightSpeed, rotationSpeed, gyroAngle, true);
   }
 
-  public void TankDrive(double forwardSpeed, double rotationSpeed, boolean squareInputs) {
+  public void TankDrive(double forwardSpeed, double rotationSpeed, boolean joystick) {
     solenoid.set(DoubleSolenoid.Value.kForward);
 
-    forwardSpeed = deadband(forwardSpeed);
-    rotationSpeed = deadband(rotationSpeed);
+    if (joystick) {
+      forwardSpeed = deadband(forwardSpeed);
+      rotationSpeed = deadband(rotationSpeed);
 
-    if (squareInputs) {
       forwardSpeed = forwardSpeed * Math.abs(forwardSpeed);
       rotationSpeed = rotationSpeed * Math.abs(rotationSpeed);
     }
