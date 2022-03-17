@@ -104,7 +104,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     drivetrain.setDeadband(0.15d);
-    encoder.setPositionConversionFactor(0.9412340788152899);
+    encoder.setPositionConversionFactor(19.1008833338);
 
     frontRightMecanum.setInverted(false);
     frontLeftMecanum.setInverted(true);
