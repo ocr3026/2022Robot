@@ -92,7 +92,7 @@ public class Robot extends TimedRobot {
   MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
 
   CANSparkMax climberAngle = new CANSparkMax(8, MotorType.kBrushless);
-  double angleSpeed = 0;
+  final double angleSpeed = 0.35;
 
   public static Vision vision = new Vision(drivetrain);
 
@@ -262,13 +262,10 @@ public class Robot extends TimedRobot {
       }
 
       if (steer.getRawButton(5)) {
-        angleSpeed = Math.Clamp(angleSpeed + 0.01, 0, 0.5);
         climberAngle.set(angleSpeed);
       } else if (steer.getRawButton(4)) {
-        angleSpeed = Math.Clamp(angleSpeed + 0.01, 0, 0.5);
         climberAngle.set(-angleSpeed);
       } else {
-        angleSpeed = 0;
         climberAngle.set(0);
       }
     } else {
@@ -281,9 +278,9 @@ public class Robot extends TimedRobot {
       }
 
       if (xbox.getRawButton(10)) {
-        climberAngle.set(1);
+        climberAngle.set(angleSpeed);
       } else if (xbox.getRawButton(8)) {
-        climberAngle.set(-1);
+        climberAngle.set(-angleSpeed);
       } else {
         climberAngle.set(0);
       }
