@@ -12,7 +12,7 @@ import ocr3026.util.MecanumTankDrive;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Vision;
 
-public class MiddleAuto extends RobotAutonomous {
+public class MiddleLeftAutoLeftBall extends RobotAutonomous {
 	private final MecanumTankDrive drivetrain = Robot.drivetrain;
 	private final AHRS gyroscope = Robot.gyroscope;
 	private final RelativeEncoder encoder = Robot.encoder;
@@ -29,7 +29,7 @@ public class MiddleAuto extends RobotAutonomous {
 	private boolean driveInRange  = false;
 	private boolean drivenDistance = false;
 
-	public MiddleAuto() {
+	public MiddleLeftAutoLeftBall() {
 		addStep(() -> {
 			if ((vision.limelight.getTargetX() < -0.2 || vision.limelight.getTargetX() > 0.2)) {
 				vision.setVisionMode();
