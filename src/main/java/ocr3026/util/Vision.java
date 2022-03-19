@@ -5,11 +5,11 @@ import edu.wpi.first.math.controller.PIDController;
 public class Vision {
 	public Limelight limelight = new Limelight();
 	private MecanumTankDrive drive;
-	private PIDController rotationPID = new PIDController(0.1, 0, 0);
+	private PIDController rotationPID = new PIDController(0.05, 0, 0);
 	private PIDController distancePID = new PIDController(0.15, 0, 0.75);
 
 	private boolean visionOn = true;
-	public static final double sweetSpot = 10;
+	public static final double sweetSpot = 4;
 
 	public Vision(MecanumTankDrive drivetrain) {
 		limelight.setCamMode(Limelight.camMode.VISION);

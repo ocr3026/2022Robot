@@ -256,7 +256,7 @@ public class Robot extends TimedRobot {
       }
     }
     if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(0.80);
+      flywheel.set(0.75);
     } else {
       flywheel.set(0);
     }
