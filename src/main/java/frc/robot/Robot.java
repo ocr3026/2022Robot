@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,6 +26,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 
 import ocr3026.util.Toggle;
+import ocr3026.Deadband;
 import ocr3026.util.Dashboard;
 import ocr3026.util.Math;
 import ocr3026.util.MecanumTankDrive;
@@ -87,14 +89,16 @@ public class Robot extends TimedRobot {
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   */
 
-  CANSparkMax innerLeftClimber = new CANSparkMax(10, MotorType.kBrushless);
-  CANSparkMax innerRightClimber = new CANSparkMax(9, MotorType.kBrushless);
-  MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
+  CANSparkMax leftClimber = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax rightClimber = new CANSparkMax(9, MotorType.kBrushless);
+  MotorControllerGroup climbers = new MotorControllerGroup(leftClimber, rightClimber);
 
   CANSparkMax climberAngle = new CANSparkMax(8, MotorType.kBrushless);
   final double angleSpeed = 0.35;
 
   public static Vision vision = new Vision(drivetrain);
+
+  public static Timer teleopTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -120,8 +124,10 @@ public class Robot extends TimedRobot {
     leftTank.setIdleMode(IdleMode.kBrake);
     rightTank.setIdleMode(IdleMode.kBrake);
 
-    innerLeftClimber.setIdleMode(IdleMode.kBrake);
-    innerRightClimber.setIdleMode(IdleMode.kBrake);
+    leftClimber.setInverted(true);
+
+    leftClimber.setIdleMode(IdleMode.kBrake);
+    rightClimber.setIdleMode(IdleMode.kBrake);
     climberAngle.setIdleMode(IdleMode.kBrake);
 
     intake.setIdleMode(IdleMode.kBrake);
@@ -175,15 +181,14 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case  "Middle Right Auto" :
         autonomous = new MiddleRightAuto();
-      case "Middle Left Ball" :
-
-      case "Middle Right Ball" :
-
-      case "Left Left Ball" :
-
-      case "Left Middle Ball" :
-
-      case "Left Right Ball" :
+      case "Middle Left Auto Middle Ball" :
+        autonomous = new MiddleLeftAutoMiddleBall();
+      case "Middle Left Auto Left Ball" :
+        autonomous = new MiddleLeftAutoLeftBall();
+      case "Left Auto" :
+        autonomous = new LeftAuto();
+      case "Right Auto" :
+      autonomous = new RightAuto();
       default :
       autonomous = new  MiddleRightAuto();
     }
@@ -202,18 +207,26 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     autonomous = null;
     System.gc();
+    teleopTimer.reset();
+    teleopTimer.start();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     if (joystick.getRawButtonPressed(13)) {
-      innerLeftClimber.getEncoder().setPosition(0);
-      innerRightClimber.getEncoder().setPosition(0);
+      leftClimber.getEncoder().setPosition(0);
+      rightClimber.getEncoder().setPosition(0);
       climberAngle.getEncoder().setPosition(0);
 
     }
-    compressor.enableDigital();
+
+    if(teleopTimer.hasElapsed(105)) {
+      compressor.disable();
+    } else {
+      compressor.enableDigital();
+    }
+
     if (joystick.getRawButtonPressed(12)) {
       gyroscope.zeroYaw();
     }
@@ -268,11 +281,11 @@ public class Robot extends TimedRobot {
 
     if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(4) || steer.getRawButton(5)) {
       if (steer.getRawButton(3)) {
-        innerClimbers.set(1);
+        climbers.set(1);
       } else if (steer.getRawButton(2)) {
-        innerClimbers.set(-1);
+        climbers.set(-1);
       } else {
-        innerClimbers.set(0);
+        climbers.set(0);
       }
 
       if (steer.getRawButton(5)) {
@@ -283,21 +296,9 @@ public class Robot extends TimedRobot {
         climberAngle.set(0);
       }
     } else {
-      if (xbox.getRawButton(9)) {
-        innerClimbers.set(1);
-      } else if (xbox.getRawButton(7)) {
-        innerClimbers.set(-1);
-      } else {
-        innerClimbers.set(0);
-      }
+      climbers.set(Deadband.deadband(xbox.getLeftY(), 0.05));
 
-      if (xbox.getRawButton(10)) {
-        climberAngle.set(angleSpeed);
-      } else if (xbox.getRawButton(8)) {
-        climberAngle.set(-angleSpeed);
-      } else {
-        climberAngle.set(0);
-      }
+      climberAngle.set(Deadband.deadband(xbox.getRightY(), 0.05));
     }
 
     /*
@@ -362,6 +363,8 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     fieldtoggle.setToggle(false);
     compressor.disable();
+    autonomous = null;
+    System.gc();
   }
 
   /** This function is called periodically when disabled. */

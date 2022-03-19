@@ -26,7 +26,6 @@ public class MiddleLeftAutoLeftBall extends RobotAutonomous {
 	private boolean isCentered = false;
 	private boolean inSweetSpot = false;
 	private boolean gyroInRange = false;
-	private boolean driveInRange  = false;
 	private boolean drivenDistance = false;
 
 	public MiddleLeftAutoLeftBall() {
@@ -80,8 +79,8 @@ public class MiddleLeftAutoLeftBall extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			if (gyroscope.getYaw() > 35 || gyroscope.getYaw() < 25) {
-				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 30), false);
+			if (gyroscope.getYaw() > 140 || gyroscope.getYaw() < 130) {
+				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 135), false);
 			}
 			else {
 				gyroInRange = true;
@@ -109,9 +108,14 @@ public class MiddleLeftAutoLeftBall extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-//			if encoder.getPosition > 
+			if (encoder.getPosition() < 10.8333333333) {
+				drivetrain.MecanumRobotCentric(.75, 0, 0, false);
+			} else {
+				drivenDistance = true;
+			}
+			
 		}, () -> {
-			return false;
+			return !drivenDistance;
 		});
 				
 		addStep(() -> {
