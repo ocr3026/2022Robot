@@ -108,7 +108,7 @@ public class Robot extends TimedRobot {
 
     frontRightMecanum.setInverted(false);
     frontLeftMecanum.setInverted(true);
-    backRightMecanum.setInverted(true);
+    backRightMecanum.setInverted(false);
     backLeftMecanum.setInverted(true);
     leftTank.setInverted(true);
     rightTank.setInverted(false);
@@ -226,7 +226,7 @@ public class Robot extends TimedRobot {
       vision.setVisionMode();
       vision.centerTarget(joystick.getY());
     } else {
-      vision.setDriverMode();
+      vision.setVisionMode();
       if (joystick.getRawButton(1)) {
         drivetrain.TankDrive(joystick.getY(), -steer.getX());
       } else if (fieldtoggle.isOn()) {
@@ -243,7 +243,7 @@ public class Robot extends TimedRobot {
       }
     }
     if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(1);
+      flywheel.set(0.80);
     } else {
       flywheel.set(0);
     }
