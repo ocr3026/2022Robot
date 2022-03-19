@@ -26,6 +26,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.kauailabs.navx.frc.AHRS;
 
 import ocr3026.util.Toggle;
+import ocr3026.Deadband;
 import ocr3026.util.Dashboard;
 import ocr3026.util.Math;
 import ocr3026.util.MecanumTankDrive;
@@ -295,21 +296,9 @@ public class Robot extends TimedRobot {
         climberAngle.set(0);
       }
     } else {
-      if (xbox.getRawButton(9)) {
-        climbers.set(1);
-      } else if (xbox.getRawButton(7)) {
-        climbers.set(-1);
-      } else {
-        climbers.set(0);
-      }
+      climbers.set(Deadband.deadband(xbox.getLeftY(), 0.05));
 
-      if (xbox.getRawButton(10)) {
-        climberAngle.set(angleSpeed);
-      } else if (xbox.getRawButton(8)) {
-        climberAngle.set(-angleSpeed);
-      } else {
-        climberAngle.set(0);
-      }
+      climberAngle.set(Deadband.deadband(xbox.getRightY(), 0.05));
     }
 
     /*
