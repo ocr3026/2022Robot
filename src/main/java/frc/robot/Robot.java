@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.XboxController;
@@ -87,14 +88,16 @@ public class Robot extends TimedRobot {
   MotorControllerGroup climber = new MotorControllerGroup(leftClimber, rightClimber);
   */
 
-  CANSparkMax innerLeftClimber = new CANSparkMax(10, MotorType.kBrushless);
-  CANSparkMax innerRightClimber = new CANSparkMax(9, MotorType.kBrushless);
-  MotorControllerGroup innerClimbers = new MotorControllerGroup(innerLeftClimber, innerRightClimber);
+  CANSparkMax leftClimber = new CANSparkMax(10, MotorType.kBrushless);
+  CANSparkMax rightClimber = new CANSparkMax(9, MotorType.kBrushless);
+  MotorControllerGroup climbers = new MotorControllerGroup(leftClimber, rightClimber);
 
   CANSparkMax climberAngle = new CANSparkMax(8, MotorType.kBrushless);
   final double angleSpeed = 0.35;
 
   public static Vision vision = new Vision(drivetrain);
+
+  public static Timer teleopTimer = new Timer();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -120,8 +123,10 @@ public class Robot extends TimedRobot {
     leftTank.setIdleMode(IdleMode.kBrake);
     rightTank.setIdleMode(IdleMode.kBrake);
 
-    innerLeftClimber.setIdleMode(IdleMode.kBrake);
-    innerRightClimber.setIdleMode(IdleMode.kBrake);
+    leftClimber.setInverted(true);
+
+    leftClimber.setIdleMode(IdleMode.kBrake);
+    rightClimber.setIdleMode(IdleMode.kBrake);
     climberAngle.setIdleMode(IdleMode.kBrake);
 
     intake.setIdleMode(IdleMode.kBrake);
@@ -201,18 +206,26 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     autonomous = null;
     System.gc();
+    teleopTimer.reset();
+    teleopTimer.start();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     if (joystick.getRawButtonPressed(13)) {
-      innerLeftClimber.getEncoder().setPosition(0);
-      innerRightClimber.getEncoder().setPosition(0);
+      leftClimber.getEncoder().setPosition(0);
+      rightClimber.getEncoder().setPosition(0);
       climberAngle.getEncoder().setPosition(0);
 
     }
-    compressor.enableDigital();
+
+    if(teleopTimer.hasElapsed(105)) {
+      compressor.disable();
+    } else {
+      compressor.enableDigital();
+    }
+
     if (joystick.getRawButtonPressed(12)) {
       gyroscope.zeroYaw();
     }
@@ -267,11 +280,11 @@ public class Robot extends TimedRobot {
 
     if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(4) || steer.getRawButton(5)) {
       if (steer.getRawButton(3)) {
-        innerClimbers.set(1);
+        climbers.set(1);
       } else if (steer.getRawButton(2)) {
-        innerClimbers.set(-1);
+        climbers.set(-1);
       } else {
-        innerClimbers.set(0);
+        climbers.set(0);
       }
 
       if (steer.getRawButton(5)) {
@@ -283,11 +296,11 @@ public class Robot extends TimedRobot {
       }
     } else {
       if (xbox.getRawButton(9)) {
-        innerClimbers.set(1);
+        climbers.set(1);
       } else if (xbox.getRawButton(7)) {
-        innerClimbers.set(-1);
+        climbers.set(-1);
       } else {
-        innerClimbers.set(0);
+        climbers.set(0);
       }
 
       if (xbox.getRawButton(10)) {
@@ -361,6 +374,8 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     fieldtoggle.setToggle(false);
     compressor.disable();
+    autonomous = null;
+    System.gc();
   }
 
   /** This function is called periodically when disabled. */
