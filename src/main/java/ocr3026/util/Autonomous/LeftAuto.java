@@ -80,8 +80,8 @@ public class LeftAuto extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			if (gyroscope.getYaw() > 35 || gyroscope.getYaw() < 25) {
-				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 30), false);
+			if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175) {
+				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180), false);
 			}
 			else {
 				gyroInRange = true;
@@ -109,9 +109,14 @@ public class LeftAuto extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-//			if encoder.getPosition > 
+			if (encoder.getPosition() < 3.3333333333) {
+				drivetrain.MecanumRobotCentric(.75, 0, 0, false);
+			} else {
+				drivenDistance = true;
+			}
+			
 		}, () -> {
-			return false;
+			return !drivenDistance;
 		});
 				
 		addStep(() -> {

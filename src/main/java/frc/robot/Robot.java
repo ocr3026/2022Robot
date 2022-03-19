@@ -175,15 +175,14 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case  "Middle Right Auto" :
         autonomous = new MiddleRightAuto();
-      case "Middle Left Ball" :
-
-      case "Middle Right Ball" :
-
-      case "Left Left Ball" :
-
-      case "Left Middle Ball" :
-
-      case "Left Right Ball" :
+      case "Middle Left Auto Middle Ball" :
+        autonomous = new MiddleLeftAutoMiddleBall();
+      case "Middle Left Auto Left Ball" :
+        autonomous = new MiddleLeftAutoLeftBall();
+      case "Left Auto" :
+        autonomous = new LeftAuto();
+      case "Right Auto" :
+      autonomous = new RightAuto();
       default :
       autonomous = new  MiddleRightAuto();
     }
