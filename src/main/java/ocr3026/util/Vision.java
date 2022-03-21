@@ -68,7 +68,7 @@ public class Vision {
 
 	public boolean goToSweetSpot() {
 		if (limelight.getBoundingBoxVertical() < (sweetSpot - 0.01) || limelight.getBoundingBoxVertical() > (sweetSpot + 0.01)) {
-			drive.MecanumRobotCentric(distancePID.calculate(limelight.getBoundingBoxVertical(), sweetSpot), 0, 0);
+			drive.MecanumRobotCentric(distancePID.calculate(limelight.getTargetY(), sweetSpot), 0, 0);
 			return false;
 		} else {
 			return true;
@@ -76,7 +76,7 @@ public class Vision {
 	}
 
 	public double getBarValue() {
-		return Math.Clamp(limelight.getBoundingBoxVertical() - sweetSpot, -5, 5);
+		return Math.Clamp(limelight.getTargetY() - sweetSpot, -5, 5);
 	}
 
 	public Limelight getLimelight() {
