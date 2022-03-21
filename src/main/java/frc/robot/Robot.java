@@ -220,12 +220,15 @@ public class Robot extends TimedRobot {
       climberAngle.getEncoder().setPosition(0);
 
     }
-
+    /*
     if(teleopTimer.hasElapsed(105)) {
       compressor.disable();
     } else {
       compressor.enableDigital();
     }
+    */
+
+    compressor.enableDigital();
 
     if (joystick.getRawButtonPressed(12)) {
       gyroscope.zeroYaw();
@@ -296,7 +299,7 @@ public class Robot extends TimedRobot {
         climberAngle.set(0);
       }
     } else {
-      climbers.set(Deadband.deadband(xbox.getLeftY(), 0.05));
+      climbers.set(-Deadband.deadband(xbox.getLeftY(), 0.05));
 
       climberAngle.set(Deadband.deadband(xbox.getRightY(), 0.05));
     }
