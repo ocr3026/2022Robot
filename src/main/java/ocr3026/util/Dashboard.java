@@ -10,7 +10,7 @@ public class Dashboard {
 	private static final Limelight limelight = Robot.vision.limelight;
 	private static final Vision vision = Robot.vision;
 	private static final AHRS gyro = Robot.gyroscope;
-	private static final NetworkTable dashboard = NetworkTableInstance.getDefault().getTable("dashboard");
+	private static final NetworkTable dashboard = NetworkTableInstance.getDefault().getTable("SmartDashboard");
 	private static Number gyroValues[] = new Number[3];
 
 	public static void updateDriverStationValues() {
