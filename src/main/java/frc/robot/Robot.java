@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
     intakeSolenoid.set(Value.kForward);
 
     CameraServer.startAutomaticCapture();
-    String[] autos = { "Middle Right Auto", "Middle Left Auto Middle Ball", "Middle Left Auto Left Ball", "Left Auto", "Right Auto"};
+    String[] autos = { "shooting Auto", "Middle Right Auto", "Middle Left Auto Middle Ball", "Middle Left Auto Left Ball", "Left Auto", "Right Auto"};
     SmartDashboard.putStringArray("Auto List", autos);
   }
 
@@ -176,21 +176,30 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = SmartDashboard.getString("Auto Selector", "Middle Left Auto " );
+    m_autoSelected = SmartDashboard.getString("Auto Selector", "shooting Auto" );
     System.out.println("Auto selected: " + m_autoSelected);
     switch (m_autoSelected) {
+      case "shooting Auto" :
+        autonomous = new shootingAuto();
+        break;
       case  "Middle Right Auto" :
         autonomous = new MiddleRightAuto();
+        break;
       case "Middle Left Auto Middle Ball" :
         autonomous = new MiddleLeftAutoMiddleBall();
+        break;
       case "Middle Left Auto Left Ball" :
         autonomous = new MiddleLeftAutoLeftBall();
+        break;
       case "Left Auto" :
         autonomous = new LeftAuto();
+        break;
       case "Right Auto" :
-      autonomous = new RightAuto();
+        autonomous = new RightAuto();
+        break;
       default :
-      autonomous = new  MiddleRightAuto();
+        autonomous = new shootingAuto();
+        break;
     }
     autonomous.init();
   }
