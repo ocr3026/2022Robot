@@ -34,7 +34,7 @@ public class shootingAuto extends RobotAutonomous {
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0.5, 0, 0, false);
 		}, () -> {
-			return !timer.hasElapsed(1.5);
+			return !timer.hasElapsed(1.0);
 		});
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
@@ -42,20 +42,21 @@ public class shootingAuto extends RobotAutonomous {
 			return !timer.hasElapsed(.5);
 		});
 		addStep(() -> {
-			if ((vision.limelight.getTargetX() < -0.2 || vision.limelight.getTargetX() > 0.2)) {
+			if ((vision.limelight.getTargetX() < -0.3 || vision.limelight.getTargetX() > 0.3)) {
 				vision.setVisionMode();
 				vision.centerTarget();
 			}
 			else  {
 				isCentered = true;
+				vision.setDriverMode();
 			}
 	
 		}, () -> {
 			return !isCentered;
 		});
 		
-		addStep(() -> {
-			if (vision.limelight.getBoundingBoxVertical() > (vision.sweetSpot + 0.01) || vision.limelight.getBoundingBoxVertical() < (vision.sweetSpot - 0.01)) {
+		/*addStep(() -> {
+			if (vision.limelight.getTargetY() > (vision.sweetSpot + 0.01) || vision.limelight.getTargetY() < (vision.sweetSpot - 0.01)) {
 				vision.goToSweetSpot();
 			}
 			else {
@@ -64,10 +65,10 @@ public class shootingAuto extends RobotAutonomous {
 			}
 		}, () -> {
 			return !inSweetSpot;
-		});
+		}); */
 
 		addStep(() -> {
-			flywheel.set(1);
+			flywheel.set(.75);
 		}, () -> {
 			return !timer.hasElapsed(1);
 		});

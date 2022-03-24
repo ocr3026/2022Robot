@@ -260,15 +260,8 @@ public class Robot extends TimedRobot {
         drivetrain.MecanumRobotCentric(joystick.getY(), -joystick.getX(), -steer.getX());
       }
     }
-    if (steer.getRawButton(11)) {
-      if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175)  {
-        drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180));
-      } else {
-        drivetrain.MecanumRobotCentric(0, 0, 0);
-      }
-    }
     if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(0.75);
+      flywheel.set(0.60);
     } else {
       flywheel.set(0);
     }
@@ -291,18 +284,30 @@ public class Robot extends TimedRobot {
       intake.set(0);
     }
 
-    if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(4) || steer.getRawButton(5)) {
+    if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(8) || steer.getRawButton(9) || steer.getRawButton(6) || steer.getRawButton(7) || steer.getRawButton(10) || steer.getRawButton(11)){
       if (steer.getRawButton(3)) {
         climbers.set(1);
       } else if (steer.getRawButton(2)) {
         climbers.set(-1);
+      } else if (steer.getRawButton(6)) {
+        leftClimber.set(1);
+        rightClimber.set(0);
+      }  else if (steer.getRawButton(7)) {
+        leftClimber.set(-1);
+        rightClimber.set(0);
+      } else if (steer.getRawButton(11)) {
+        rightClimber.set(1);
+        leftClimber.set(0);
+      } else if (steer.getRawButton(10)) {
+        rightClimber.set(-1);
+        leftClimber.set(0);
       } else {
         climbers.set(0);
       }
 
-      if (steer.getRawButton(5)) {
+      if (steer.getRawButton(9)) {
         climberAngle.set(angleSpeed);
-      } else if (steer.getRawButton(4)) {
+      } else if (steer.getRawButton(8)) {
         climberAngle.set(-angleSpeed);
       } else {
         climberAngle.set(0);
@@ -394,3 +399,6 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
   }
 }
+
+
+

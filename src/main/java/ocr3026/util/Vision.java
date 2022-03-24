@@ -67,7 +67,7 @@ public class Vision {
 	}
 
 	public boolean goToSweetSpot() {
-		if (limelight.getBoundingBoxVertical() < (sweetSpot - 0.01) || limelight.getBoundingBoxVertical() > (sweetSpot + 0.01)) {
+		if (limelight.getTargetY() < (sweetSpot - 0.01) || limelight.getTargetY() > (sweetSpot + 0.01)) {
 			drive.MecanumRobotCentric(distancePID.calculate(limelight.getTargetY(), sweetSpot), 0, 0);
 			return false;
 		} else {
