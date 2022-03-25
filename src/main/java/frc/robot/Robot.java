@@ -284,7 +284,7 @@ public class Robot extends TimedRobot {
       intake.set(0);
     }
 
-    if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(8) || steer.getRawButton(9) || steer.getRawButton(6) || steer.getRawButton(7) || steer.getRawButton(10) || steer.getRawButton(11)){
+    if(steer.getRawButton(2) || steer.getRawButton(3) || steer.getRawButton(8) || steer.getRawButton(9) || steer.getRawButton(6) || steer.getRawButton(7) || steer.getRawButton(10) || steer.getRawButton(11) || steer.getRawButton(5) || steer.getRawButton(4)){
       if (steer.getRawButton(3)) {
         climbers.set(1);
       } else if (steer.getRawButton(2)) {
@@ -305,9 +305,9 @@ public class Robot extends TimedRobot {
         climbers.set(0);
       }
 
-      if (steer.getRawButton(9)) {
+      if (steer.getRawButton(9) || steer.getRawButton(5)) {
         climberAngle.set(angleSpeed);
-      } else if (steer.getRawButton(8)) {
+      } else if (steer.getRawButton(8) || steer.getRawButton(4)) {
         climberAngle.set(-angleSpeed);
       } else {
         climberAngle.set(0);

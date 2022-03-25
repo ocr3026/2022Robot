@@ -32,9 +32,9 @@ public class shootingAuto extends RobotAutonomous {
 
 	public shootingAuto() {
 		addStep(() -> {
-			drivetrain.MecanumRobotCentric(0.5, 0, 0, false);
+			drivetrain.MecanumRobotCentric(0.25, 0, 0, false);
 		}, () -> {
-			return !timer.hasElapsed(1.0);
+			return !timer.hasElapsed(2.0);
 		});
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
@@ -48,7 +48,6 @@ public class shootingAuto extends RobotAutonomous {
 			}
 			else  {
 				isCentered = true;
-				vision.setDriverMode();
 			}
 	
 		}, () -> {
@@ -60,7 +59,7 @@ public class shootingAuto extends RobotAutonomous {
 				vision.goToSweetSpot();
 			}
 			else {
-				vision.setDriverMode();
+				
 				inSweetSpot = true;
 			}
 		}, () -> {
@@ -70,25 +69,31 @@ public class shootingAuto extends RobotAutonomous {
 		addStep(() -> {
 			flywheel.set(.75);
 		}, () -> {
-			return !timer.hasElapsed(1);
+			return !timer.hasElapsed(2);
 		});
 		
 		addStep(() -> {
 			kickup.set(Value.kForward);
 		}, () -> {
-			return !timer.hasElapsed(.5);
+			return !timer.hasElapsed(1.5);
 		});
-				
 		addStep(() -> {
 			kickup.set(Value.kReverse);
 		}, () -> {
-			return !timer.hasElapsed(.5);
+			return !timer.hasElapsed(1);
 		});
 		addStep(() -> {
 			flywheel.set(0);
 		}, () -> {
-			return !timer.hasElapsed(.5);
+			return !timer.hasElapsed(2);
 		});
+		addStep(() -> {
+			vision.setDriverMode();
+		}, () -> {
+			return !timer.hasElapsed(1);
+		});		
+
+
 	}
 }
 
