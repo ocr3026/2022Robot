@@ -28,7 +28,7 @@ import com.kauailabs.navx.frc.AHRS;
 import ocr3026.util.Toggle;
 import ocr3026.Deadband;
 import ocr3026.util.Dashboard;
-import ocr3026.util.Math;
+import ocr3026.util.OCRMath;
 import ocr3026.util.MecanumTankDrive;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Autonomous.*;
@@ -227,7 +227,6 @@ public class Robot extends TimedRobot {
       leftClimber.getEncoder().setPosition(0);
       rightClimber.getEncoder().setPosition(0);
       climberAngle.getEncoder().setPosition(0);
-
     }
     /*
     if(teleopTimer.hasElapsed(105)) {

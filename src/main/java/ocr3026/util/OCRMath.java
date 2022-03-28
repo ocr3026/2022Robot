@@ -1,6 +1,6 @@
 package ocr3026.util;
 
-public class Math {
+public class OCRMath {
 	public static double Clamp(double value, double min, double max) {
 		if(value < min) {
 			return min;

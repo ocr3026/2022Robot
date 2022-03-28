@@ -47,8 +47,8 @@ public class Vision {
 
 	public boolean centerTarget(double forward) {
 		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
-			System.out.println(Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25));
-			drive.MecanumRobotCentric(0, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
+			System.out.println(OCRMath.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25));
+			drive.MecanumRobotCentric(0, 0, OCRMath.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
 			drive.MecanumRobotCentric(forward, 0, 0, false);
@@ -58,7 +58,7 @@ public class Vision {
 
 	public boolean centerTarget() {
 		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
-			drive.MecanumRobotCentric(0, 0, Math.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
+			drive.MecanumRobotCentric(0, 0, OCRMath.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
 			drive.MecanumRobotCentric(0, 0, 0);
@@ -76,7 +76,7 @@ public class Vision {
 	}
 
 	public double getBarValue() {
-		return Math.Clamp(limelight.getTargetY() - sweetSpot, -5, 5);
+		return OCRMath.Clamp(limelight.getTargetY() - sweetSpot, -5, 5);
 	}
 
 	public Limelight getLimelight() {
