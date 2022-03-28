@@ -39,7 +39,7 @@ public class Vision {
 
 	public void toggleVision() {
 		if (visionOn) {
-			limelight.setCamMode(Limelight.camMode.DRIVER);
+			limelight.setCamMode(Limelight.camMode.VISION);
 			limelight.setLedMode(Limelight.ledMode.OFF);
 		} else {
 			limelight.setCamMode(Limelight.camMode.VISION);
