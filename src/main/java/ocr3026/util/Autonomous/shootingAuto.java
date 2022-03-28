@@ -1,11 +1,8 @@
-
-	package ocr3026.util.Autonomous;
+package ocr3026.util.Autonomous;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-
-import ocr3026.util.Math;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
