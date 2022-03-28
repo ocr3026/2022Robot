@@ -7,6 +7,7 @@ public class Vision {
 	private MecanumTankDrive drive;
 	private PIDController rotationPID = new PIDController(0.02, 0, 0);
 	private PIDController distancePID = new PIDController(0.02, 0, 0);
+	private double flywheelSpeed = 0;
 
 	private boolean visionOn = true;
 	public static final double sweetSpot = 4;
@@ -73,6 +74,14 @@ public class Vision {
 		} else {
 			return true;
 		}
+	}
+
+	public double setFlywheelSpeed()  {
+		flywheelSpeed = limelight.getTargetY();
+		if (flywheelSpeed > 1.0 || flywheelSpeed < 0) {
+			flywheelSpeed = 0;
+		}
+		return flywheelSpeed;
 	}
 
 	public double getBarValue() {

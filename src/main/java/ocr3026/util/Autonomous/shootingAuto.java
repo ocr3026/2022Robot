@@ -32,15 +32,68 @@ public class shootingAuto extends RobotAutonomous {
 
 	public shootingAuto() {
 		addStep(() -> {
+			if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175) {
+				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180), false);
+			}
+			else {
+				gyroInRange = true;
+			}
+		}, () -> {
+			return !gyroInRange;
+		});
+				
+		addStep(() -> {
+			drivetrain.MecanumRobotCentric(0, 0, 0, false);
+		}, () -> {
+			return !timer.hasElapsed(.2);
+		});
+		
+		addStep(() -> {
+			intakeSolenoid.set(Value.kReverse);
+		}, () -> {
+			return !timer.hasElapsed(.5);
+		});
+				
+		addStep(() -> {
+			intake.set(1);
+		}, () -> {
+			return !timer.hasElapsed(.4);
+		});
+
+		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0.25, 0, 0, false);
 		}, () -> {
 			return !timer.hasElapsed(1.5);
 		});
+
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
 		}, () -> {
 			return !timer.hasElapsed(.5);
 		});
+		addStep(() -> {
+			intake.set(0);
+		}, () -> {
+			return timer.hasElapsed(.4);
+		});
+		
+		addStep(() -> {
+			intakeSolenoid.set(Value.kForward);
+		}, () -> {
+			return !timer.hasElapsed(.5);
+		});
+		
+		addStep(() -> {
+			if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175) {
+				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180), false);
+			}
+			else {
+				gyroInRange = true;
+			}
+		}, () -> {
+			return !gyroInRange;
+		});
+		
 		/*addStep(() -> {
 			if (vision.limelight.getTargetY() > (vision.sweetSpot + 0.01) || vision.limelight.getTargetY() < (vision.sweetSpot - 0.01)) {
 				drivetrain.MecanumRobotCentric(vision.distancePID.calculate(vision.limelight.getTargetY(), sweetSpot), 0, 0);
@@ -52,6 +105,7 @@ public class shootingAuto extends RobotAutonomous {
 		}, () -> {
 			return !inSweetSpot;
 		}); */
+
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(-0.25, 0, 0, false);
 		}, () -> {
