@@ -24,12 +24,17 @@ public class RobotAutonomous {
   }
 
   public void periodic() {
-    if(currentStep.second.get()) {
+    if(currentStep != null && currentStep.second.get()) {
       currentStep.first.run();
     } else {
-      currentStep = stepQueue.remove();
-      timer.reset();
-      timer.start();
+        if (!stepQueue.isEmpty()) {
+          currentStep = stepQueue.remove();
+          timer.reset();
+          timer.start();
+        }
+        else {
+          currentStep = null;
+        }
     }
   }
 }

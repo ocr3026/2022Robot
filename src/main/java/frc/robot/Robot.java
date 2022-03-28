@@ -249,7 +249,7 @@ public class Robot extends TimedRobot {
 
     if (xbox.getLeftTriggerAxis() > 0.9) {
       vision.setVisionMode();
-      vision.centerTarget(joystick.getY());
+      vision.centerTarget();
     } else {
       vision.setVisionMode();
       if (joystick.getRawButton(1)) {
