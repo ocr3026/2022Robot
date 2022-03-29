@@ -12,7 +12,7 @@ public class Vision {
 	private boolean visionOn = true;
 	public static final double sweetSpot = 4;
 
-	final double a = 1, b = 1, c = 1;
+	final double a = 0.000006, b = -0.004276, c = 0.564841;
 
 	public Vision(MecanumTankDrive drivetrain) {
 		limelight.setCamMode(Limelight.camMode.VISION);
@@ -79,7 +79,7 @@ public class Vision {
 	}
 
 	public double getFlywheelSpeed()  {
-		flywheelSpeed = (limelight.getTargetY() * a * a) + (limelight.getTargetY() * b) + c;
+		flywheelSpeed = (limelight.getTargetY() * limelight.getTargetY() * a) + (limelight.getTargetY() * b) + c;
 		if (flywheelSpeed > 1.0 || flywheelSpeed < 0) {
 			flywheelSpeed = 0;
 		}

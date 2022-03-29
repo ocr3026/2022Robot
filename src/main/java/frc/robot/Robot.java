@@ -107,6 +107,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    SmartDashboard.putNumber("Flywheel Speed", 0.0);
     drivetrain.setDeadband(0.15d);
     encoder.setPositionConversionFactor(19.1008833338);
 
@@ -260,7 +261,7 @@ public class Robot extends TimedRobot {
       }
     }
     if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(vision.setFlywheelSpeed());
+      flywheel.set(SmartDashboard.getNumber("Flywheel Speed", .1));
     } else {
       flywheel.set(0);
     }
