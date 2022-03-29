@@ -80,10 +80,7 @@ public class Vision {
 
 	public double getFlywheelSpeed()  {
 		flywheelSpeed = (limelight.getTargetY() * limelight.getTargetY() * a) + (limelight.getTargetY() * b) + c;
-		if (flywheelSpeed > 1.0 || flywheelSpeed < 0) {
-			flywheelSpeed = 0;
-		}
-		return flywheelSpeed;
+		return OCRMath.Clamp(flywheelSpeed, 0.0, 1.0);
 	}
 
 	public double getBarValue() {

@@ -261,7 +261,7 @@ public class Robot extends TimedRobot {
       }
     }
     if (xbox.getRightTriggerAxis() > 0.9) {
-      flywheel.set(SmartDashboard.getNumber("Flywheel Speed", .1));
+      flywheel.set(vision.getFlywheelSpeed());
     } else {
       flywheel.set(0);
     }
