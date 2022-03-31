@@ -100,7 +100,7 @@ public class twoBall extends RobotAutonomous {
 			return !timer.hasElapsed(1);
 		});
 		addStep(() -> {
-			intake.set(.75);
+			intake.set(.8);
 		}, () -> {
 			return !timer.hasElapsed(1);
 		});
@@ -125,8 +125,11 @@ public class twoBall extends RobotAutonomous {
 		}, () -> {
 			return !timer.hasElapsed(1);
 		});		
-
-
+		addStep(() -> {
+			intake.set(0);
+		}, () -> {
+			return !timer.hasElapsed(1);
+		});
 	}
 }
 
