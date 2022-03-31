@@ -23,7 +23,7 @@ public class Limelight {
     }
 
     public boolean checkForTarget() {
-        return limelight.getEntry("tv").getBoolean(false);
+        return limelight.getEntry("tv").getNumber(0).intValue() == 1;
     }
 
     public double getTargetX() {

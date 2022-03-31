@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
   public static RelativeEncoder encoder = frontLeftMecanum.getEncoder();
 
-  public static PIDController gyroscoperotation = new PIDController(1, 0, 0);
+  public static PIDController gyroscoperotation = new PIDController(.2, 0, 0);
 
   static DoubleSolenoid tankSolenoid = new DoubleSolenoid(1, PneumaticsModuleType.CTREPCM, 3, 2);
 
@@ -138,7 +138,7 @@ public class Robot extends TimedRobot {
     intakeSolenoid.set(Value.kForward);
 
     CameraServer.startAutomaticCapture();
-    String[] autos = { "shooting Auto", "Middle Right Auto", "Middle Left Auto Middle Ball", "Middle Left Auto Left Ball", "Left Auto", "Right Auto"};
+    String[] autos = { "Two Ball Auto", "Single Ball Auto"};
     SmartDashboard.putStringArray("Auto List", autos);
   }
 
@@ -180,26 +180,13 @@ public class Robot extends TimedRobot {
     m_autoSelected = SmartDashboard.getString("Auto Selector", "shooting Auto" );
     System.out.println("Auto selected: " + m_autoSelected);
     switch (m_autoSelected) {
-      case "shooting Auto" :
-        autonomous = new shootingAuto();
+      case "Two Ball Auto" :
+        autonomous = new twoBall();
         break;
-      case  "Middle Right Auto" :
-        autonomous = new MiddleRightAuto();
-        break;
-      case "Middle Left Auto Middle Ball" :
-        autonomous = new MiddleLeftAutoMiddleBall();
-        break;
-      case "Middle Left Auto Left Ball" :
-        autonomous = new MiddleLeftAutoLeftBall();
-        break;
-      case "Left Auto" :
-        autonomous = new LeftAuto();
-        break;
-      case "Right Auto" :
-        autonomous = new RightAuto();
-        break;
+      case  "Single Ball Auto" :
+        autonomous = new singleBallAuto();
       default :
-        autonomous = new shootingAuto();
+        autonomous = new twoBall();
         break;
     }
     autonomous.init();

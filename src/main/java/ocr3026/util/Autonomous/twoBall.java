@@ -12,7 +12,7 @@ import ocr3026.util.MecanumTankDrive;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Vision;
 
-public class shootingAuto extends RobotAutonomous {
+public class twoBall extends RobotAutonomous {
 	private final PIDController autoRotationPID = new PIDController(.2, 0, 0);
 	private final MecanumTankDrive drivetrain = Robot.drivetrain;
 	private final AHRS gyroscope = Robot.gyroscope;
@@ -30,7 +30,7 @@ public class shootingAuto extends RobotAutonomous {
 	private boolean driveInRange  = false;
 	private boolean drivenDistance = false;
 
-	public shootingAuto() {
+	public twoBall() {
 		addStep(() -> {
 			vision.setVisionMode();
 			intakeSolenoid.set(Value.kReverse);
@@ -39,56 +39,39 @@ public class shootingAuto extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			intake.set(1);
+			intake.set(.7);
 		}, () -> {
 			return !timer.hasElapsed(.2);
 		});
 
 		addStep(() -> {
-			drivetrain.MecanumRobotCentric(0.25, 0, 0, false);
+			drivetrain.MecanumRobotCentric(-0.25, 0, 0, false);
 		}, () -> {
-			return !timer.hasElapsed(1.5);
+			return !timer.hasElapsed(1.35);
 		});
 
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
 		}, () -> {
-			return !timer.hasElapsed(.3);
+			return !timer.hasElapsed(.25);
 		});
+		
+
 		addStep(() -> {
 			intake.set(0);
 		}, () -> {
-			return timer.hasElapsed(.3);
+			return !timer.hasElapsed(.1);
 		});
-		
+
 		addStep(() -> {
-			if (gyroscope.getYaw() > 185 || gyroscope.getYaw() < 175) {
-				drivetrain.MecanumRobotCentric(0, 0, gyroscoperotation.calculate(gyroscope.getYaw(), 180), false);
+			if (vision.limelight.checkForTarget() == false) {
+				drivetrain.MecanumRobotCentric(0, 0,.25, false);
 			}
 			else {
 				gyroInRange = true;
 			}
 		}, () -> {
 			return !gyroInRange;
-		});
-		
-		addStep(() -> {
-			if(vision.goToSweetSpot()) {
-				inSweetSpot = true;
-			}
-		}, () -> {
-			return !inSweetSpot;
-		});
-
-		addStep(() -> {
-			drivetrain.MecanumRobotCentric(-0.25, 0, 0, false);
-		}, () -> {
-			return !timer.hasElapsed(.75);
-		});
-		addStep(() -> {
-			drivetrain.MecanumRobotCentric(0, 0, 0, false);
-		}, () -> {
-			return !timer.hasElapsed(.5);
 		});
 		addStep(() -> {
 			if(vision.centerTarget()) {
@@ -101,9 +84,25 @@ public class shootingAuto extends RobotAutonomous {
 		
 
 		addStep(() -> {
-			flywheel.set(.6);
+			flywheel.set(vision.getFlywheelSpeed());
 		}, () -> {
 			return !timer.hasElapsed(1.5);
+		});
+		
+		addStep(() -> {
+			kickup.set(Value.kReverse);
+		}, () -> {
+			return !timer.hasElapsed(1.5);
+		});
+		addStep(() -> {
+			kickup.set(Value.kForward);
+		}, () -> {
+			return !timer.hasElapsed(1);
+		});
+		addStep(() -> {
+			intake.set(.75);
+		}, () -> {
+			return !timer.hasElapsed(1);
 		});
 		
 		addStep(() -> {

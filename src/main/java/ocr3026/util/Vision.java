@@ -12,7 +12,8 @@ public class Vision {
 	private boolean visionOn = true;
 	public static final double sweetSpot = 4;
 
-	final double a = 0.000006, b = -0.004276, c = 0.564841;
+	final double a = 0.0010925493, b = -0.0033802599, c = 0.5746095998;
+	//final double a = 0, b = -0.01553430828, c = 0.5440816687;
 
 	public Vision(MecanumTankDrive drivetrain) {
 		limelight.setCamMode(Limelight.camMode.VISION);
@@ -49,7 +50,7 @@ public class Vision {
 	}
 
 	public boolean centerTarget(double forward) {
-		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
+		if (limelight.getTargetX() < -0.05 || limelight.getTargetX() > 0.05) {
 			System.out.println(OCRMath.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25));
 			drive.MecanumRobotCentric(0, 0, OCRMath.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
@@ -60,7 +61,7 @@ public class Vision {
 	}
 
 	public boolean centerTarget() {
-		if (limelight.getTargetX() < -0.1 || limelight.getTargetX() > 0.1) {
+		if (limelight.getTargetX() < -0.05 || limelight.getTargetX() > 0.05) {
 			drive.MecanumRobotCentric(0, 0, OCRMath.Clamp(rotationPID.calculate(limelight.getTargetX(), 0), -0.25, 0.25), false);
 			return false;
 		} else {
@@ -80,7 +81,7 @@ public class Vision {
 
 	public double getFlywheelSpeed()  {
 		flywheelSpeed = (limelight.getTargetY() * limelight.getTargetY() * a) + (limelight.getTargetY() * b) + c;
-		return OCRMath.Clamp(flywheelSpeed, 0.0, 1.0);
+		return OCRMath.Clamp(flywheelSpeed, 0.53, 1.0);
 	}
 
 	public double getBarValue() {
