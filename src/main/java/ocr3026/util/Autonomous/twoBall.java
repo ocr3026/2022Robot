@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Robot;
 import ocr3026.util.MecanumTankDrive;
+import ocr3026.util.OCRMath;
 import ocr3026.util.RobotAutonomous;
 import ocr3026.util.Vision;
 
@@ -39,21 +40,21 @@ public class twoBall extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			intake.set(.7);
+			intake.set(.66);
 		}, () -> {
 			return !timer.hasElapsed(.2);
 		});
 
 		addStep(() -> {
-			drivetrain.MecanumRobotCentric(-0.25, 0, 0, false);
+			drivetrain.MecanumRobotCentric(OCRMath.Clamp(-0.4 * timer.get(), -0.4, 0), 0, 0, false);
 		}, () -> {
-			return !timer.hasElapsed(1.35);
+			return !timer.hasElapsed(1.4);
 		});
 
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
 		}, () -> {
-			return !timer.hasElapsed(.25);
+			return !timer.hasElapsed(.1);
 		});
 		
 
@@ -74,17 +75,15 @@ public class twoBall extends RobotAutonomous {
 			return !gyroInRange;
 		});
 		addStep(() -> {
-			if(vision.centerTarget()) {
-				isCentered = true;
-			}
+			isCentered = vision.centerTarget();
 		}, () -> {
-			return (!isCentered && !timer.hasElapsed(2));
+			return !isCentered && !timer.hasElapsed(1.5);
 		});
 		
 		
 
 		addStep(() -> {
-			flywheel.set(vision.getFlywheelSpeed());
+			flywheel.set(vision.getFlywheelSpeed() + 0.05);
 		}, () -> {
 			return !timer.hasElapsed(1.5);
 		});
