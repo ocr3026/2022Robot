@@ -40,7 +40,7 @@ public class twoBall extends RobotAutonomous {
 		});
 				
 		addStep(() -> {
-			intake.set(.66);
+			intake.set(.49);
 		}, () -> {
 			return !timer.hasElapsed(.2);
 		});
@@ -48,7 +48,7 @@ public class twoBall extends RobotAutonomous {
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(OCRMath.Clamp(-0.4 * timer.get(), -0.4, 0), 0, 0, false);
 		}, () -> {
-			return !timer.hasElapsed(1.4);
+			return !timer.hasElapsed(1.9);
 		});
 
 		addStep(() -> {
@@ -77,13 +77,14 @@ public class twoBall extends RobotAutonomous {
 		addStep(() -> {
 			isCentered = vision.centerTarget();
 		}, () -> {
-			return !isCentered && !timer.hasElapsed(1.5);
+			return !isCentered && !timer.hasElapsed(2);
 		});
 		
 		
 
 		addStep(() -> {
-			flywheel.set(vision.getFlywheelSpeed() + 0.05);
+			drivetrain.MecanumRobotCentric(0, 0, 0);
+			flywheel.set(vision.getFlywheelSpeed());
 		}, () -> {
 			return !timer.hasElapsed(1.5);
 		});

@@ -177,15 +177,16 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = SmartDashboard.getString("Auto Selector", "shooting Auto" );
+    m_autoSelected = SmartDashboard.getString("Auto Selector", "Two Ball Auto" );
     System.out.println("Auto selected: " + m_autoSelected);
     switch (m_autoSelected) {
-      case "Two Ball Auto" :
+      case "Two Ball Auto":
         autonomous = new twoBall();
         break;
-      case  "Single Ball Auto" :
+      case "Single Ball Auto":
         autonomous = new singleBallAuto();
-      default :
+        break;
+      default:
         autonomous = new twoBall();
         break;
     }

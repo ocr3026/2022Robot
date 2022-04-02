@@ -35,7 +35,7 @@ public class singleBallAuto extends RobotAutonomous {
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0.25, 0, 0, false);
 		}, () -> {
-			return !timer.hasElapsed(1.5);
+			return !timer.hasElapsed(2);
 		});
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
@@ -43,26 +43,14 @@ public class singleBallAuto extends RobotAutonomous {
 			return !timer.hasElapsed(.5);
 		});
 		addStep(() -> {
-			drivetrain.MecanumRobotCentric(-0.25, 0, 0, false);
+			isCentered = vision.centerTarget();
 		}, () -> {
-			return !timer.hasElapsed(.75);
+			return !isCentered && !timer.hasElapsed(2);
 		});
 		addStep(() -> {
-			drivetrain.MecanumRobotCentric(0, 0, 0, false);
+			drivetrain.MecanumRobotCentric(0, 0, 0);
 		}, () -> {
-			return !timer.hasElapsed(.5);
-		});
-		addStep(() -> {
-			if ((vision.limelight.getTargetX() < -0.1 || vision.limelight.getTargetX() > 0.1)) {
-				vision.setVisionMode();
-				drivetrain.MecanumRobotCentric(0, 0, OCRMath.Clamp(autoRotationPID.calculate(vision.limelight.getTargetX(), 0), -0.2, 0.2), false);
-			}
-			else  {
-				isCentered = true;
-			}
-	
-		}, () -> {
-			return (!isCentered && !timer.hasElapsed(2));
+			return !timer.hasElapsed(.7);
 		});
 		addStep(() -> {
 			flywheel.set(vision.getFlywheelSpeed());
