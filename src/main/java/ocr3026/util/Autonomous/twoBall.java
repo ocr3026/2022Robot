@@ -102,7 +102,7 @@ public class twoBall extends RobotAutonomous {
 		addStep(() -> {
 			intake.set(.8);
 		}, () -> {
-			return !timer.hasElapsed(1);
+			return !timer.hasElapsed(2);
 		});
 		
 		addStep(() -> {
@@ -118,7 +118,7 @@ public class twoBall extends RobotAutonomous {
 		addStep(() -> {
 			flywheel.set(0);
 		}, () -> {
-			return !timer.hasElapsed(2);
+			return !timer.hasElapsed(.5);
 		});
 		addStep(() -> {
 			vision.setDriverMode();
@@ -128,7 +128,7 @@ public class twoBall extends RobotAutonomous {
 		addStep(() -> {
 			intake.set(0);
 		}, () -> {
-			return !timer.hasElapsed(1);
+			return !timer.hasElapsed(.5);
 		});
 	}
 }
