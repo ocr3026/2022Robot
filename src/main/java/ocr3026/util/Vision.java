@@ -12,8 +12,8 @@ public class Vision {
 	private boolean visionOn = true;
 	public static final double sweetSpot = 4;
 
-	final double a = 0.0010925493, b = -0.0033802599, c = 0.5746095998;
-	//final double a = 0, b = -0.01553430828, c = 0.5440816687;
+	final double a = 0.0004, b = -0.0034002599, c = 0.60560959;
+	//final double a = 0.001092549, b = -0.0033802599, c = 0.5746095998;
 
 	public Vision(MecanumTankDrive drivetrain) {
 		limelight.setCamMode(Limelight.camMode.VISION);

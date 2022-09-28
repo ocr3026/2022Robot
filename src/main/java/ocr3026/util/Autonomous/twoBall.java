@@ -65,23 +65,17 @@ public class twoBall extends RobotAutonomous {
 		});
 
 		addStep(() -> {
-			if (vision.limelight.checkForTarget() == false) {
-				drivetrain.MecanumRobotCentric(0, 0,.25, false);
-			}
-			else {
-				gyroInRange = true;
-			}
+			drivetrain.MecanumRobotCentric(0, 0, 0.25, false);
 		}, () -> {
-			return !gyroInRange;
+			return !timer.hasElapsed(1.5);
 		});
+
 		addStep(() -> {
 			isCentered = vision.centerTarget();
 		}, () -> {
 			return !isCentered && !timer.hasElapsed(2);
 		});
 		
-		
-
 		addStep(() -> {
 			drivetrain.MecanumRobotCentric(0, 0, 0);
 			flywheel.set(vision.getFlywheelSpeed());
@@ -100,6 +94,7 @@ public class twoBall extends RobotAutonomous {
 			return !timer.hasElapsed(1);
 		});
 		addStep(() -> {
+			flywheel.set(vision.getFlywheelSpeed());
 			intake.set(.8);
 		}, () -> {
 			return !timer.hasElapsed(2);
